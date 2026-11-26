@@ -1,0 +1,6 @@
+- insert:
+    - id: koi-gate
+      name: 'dsh-koi-gate'
+      config:
+        # 可选：部署方在 profile 中提供需要硬放行的对端别名，模板默认留空。
+        rivalAliases: []

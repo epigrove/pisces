@@ -1,0 +1,16 @@
+{
+  "name": "pisces",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@12",
+  "description": "Pisces 双 agent 架构参考实现（上游仓库）。node_modules 由 pnpm 生成，不手改。",
+  "license": "MIT",
+  "devDependencies": {
+    "dsh-koi-decay": "workspace:*",
+    "dsh-koi-chat": "workspace:*",
+    "dsh-koi-gate": "workspace:*"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "dsh-koi-media",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "图片库存、视频首帧与带图消息自动识图（读取前限流，库存路径受限）",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "talk",
+      "label": "图片/视频",
+      "desc": "图片库存（收了能捞回来）+ 视频取首帧 + 带图消息自动识图（只给客观描述、不替 agent 判断）"
+    }
+  },
+  "dependencies": {
+    "dsh-pisces-config": "workspace:*"
+  }
+}

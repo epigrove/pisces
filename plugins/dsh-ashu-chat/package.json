@@ -1,0 +1,37 @@
+{
+  "name": "dsh-ashu-chat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pisces 聊天：宿主侧与对端 agent 的对话面板。新建并固定一个会话，直接在这里收发。",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    },
+    "pisces": {
+      "category": "talk",
+      "label": "Pisces 聊天",
+      "desc": "宿主侧聊天面板：经签名 JSONL 通道与对端 agent 收发消息"
+    }
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dsh-koi-chat": "workspace:*"
+  }
+}

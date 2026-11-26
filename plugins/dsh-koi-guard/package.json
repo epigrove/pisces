@@ -1,0 +1,19 @@
+{
+  "name": "dsh-koi-guard",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "agent 护栏：路径白名单、发送前确认——所有「能不能做」的判定集中在一处",
+  "main": "lib/index.js",
+  "dsh": {
+    "bundle": {
+      "patch": "cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "safety",
+      "label": "读写白名单",
+      "desc": "读写路径白名单，越界即拦"
+    }
+  }
+}

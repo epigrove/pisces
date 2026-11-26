@@ -1,0 +1,30 @@
+{
+  "name": "dsh-koi-affect",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "agent 情感状态：好感、喜恶、时段、情绪",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "memory",
+      "label": "情绪",
+      "desc": "情绪不存值，按曲线现算；重启不丢、可回放"
+    }
+  },
+  "dependencies": {
+    "dsh-koi-decay": "workspace:*",
+    "dsh-pisces-config": "workspace:*"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

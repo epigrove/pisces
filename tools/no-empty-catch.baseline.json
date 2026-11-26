@@ -1,0 +1,19 @@
+[
+ "plugins/dsh-ashu-chat/index.js|catch { badLines += 1; return []; }",
+ "plugins/dsh-koi-affect/test-mood-dims.mjs|catch {}",
+ "plugins/dsh-koi-chat/lib/iterate.js|catch { continue; }",
+ "plugins/dsh-koi-chat/lib/sign.js|catch { continue; }",
+ "plugins/dsh-koi-chat/test-chat-store.mjs|catch {}",
+ "plugins/dsh-koi-gate/lib/dedupe.mjs|catch { store = {}; }",
+ "plugins/dsh-koi-gate/lib/leak.mjs|catch { raw = []; }",
+ "plugins/dsh-koi-gate/test-selftalk.mjs|catch { threw = true; }",
+ "plugins/dsh-koi-gate/test-selftalk.mjs|catch { threw = true; }",
+ "plugins/dsh-koi-guard/test-guard.mjs|catch {}",
+ "plugins/dsh-koi-guard/test-guard.mjs|catch {}",
+ "plugins/dsh-koi-lexicon/test-regressions.mjs|catch {}",
+ "plugins/dsh-koi-media/test-stickers.mjs|catch {}",
+ "plugins/dsh-koi-memory/lib/index.js|catch { /* 忽略 *\\/ }",
+ "plugins/dsh-koi-memory/lib/index.js|catch { continue; }",
+ "plugins/dsh-koi-memory/test-memory-envelope.mjs|catch{}",
+ "plugins/dsh-koi-memory/test-regressions.mjs|catch {}"
+]

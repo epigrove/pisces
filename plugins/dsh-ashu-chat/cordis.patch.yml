@@ -1,0 +1,6 @@
+# dsh-ashu-chat —— ashu侧「Pisces 聊天」面板
+- insert:
+    - id: ashu-chat-config
+      name: 'dsh-ashu-chat'
+      config:
+        koiHome: ''

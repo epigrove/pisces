@@ -1,0 +1,20 @@
+# dsh-koi-memory bundle patch
+# 四层记忆：固定设定（只读）+ 人设卡 + 事实 + 短期，统一注意力模型
+# 公式：R = exp(-Δt/S) / (1+dup)，S = base × (0.4+1.2×importance) × (1+0.6×hits)
+# 量控：R 阈值 + 条数上限（不设字符预算；超出的挤出活跃集，原文不删）
+- insert:
+    - id: qqbot-memory
+      name: 'dsh-koi-memory'
+      config:
+        # 事实层容量：超了把注意力分最低的移进 memory.md.archive（不删）
+        maxEntries: 300
+        # 2026-11-18 主人定：**1 小时窗口 / 60 条**（原 30 分钟 / 40 条，他觉得不够用）。
+        # 规则：1 小时内超过 60 条 → 那 1 小时内的全给；不足 60 条 → 补足到最近 60 条。
+        # 成本：60 条 ≈ 1200 token/轮，覆盖约 2.4 小时群聊。
+        # 会话历史已被压到「摘要 + 最近 3000 token」，群聊连续性靠这条线。
+        groupRecent: 60
+        groupRecentWindowMin: 60
+        # 短期：内存只装最近 300 条，磁盘文件保留最近 5 天（不删）
+        shortMaxItems: 300
+        shortKeepFiles: 5
+        shortFlushMs: 60000

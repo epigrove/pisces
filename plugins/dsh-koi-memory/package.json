@@ -1,0 +1,31 @@
+{
+  "name": "dsh-koi-memory",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "QQ 机器人长期记忆 v8：中文 bigram 召回 + 分层注入，只增不删",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "memory",
+      "label": "四层记忆",
+      "desc": "长期/中期/短期/内核四层，只增不删，过期只打标记"
+    }
+  },
+  "dependencies": {
+    "dsh-koi-decay": "workspace:*",
+    "dsh-koi-lexicon": "workspace:*",
+    "dsh-pisces-config": "workspace:*"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

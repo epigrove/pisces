@@ -1,0 +1,8 @@
+# dsh-koi-media bundle patch
+# 群图压到 1MB 以内（配置在 lib/index.js 顶部，不放进 yml 免得漏）
+- insert:
+    - id: koi-media
+      name: 'dsh-koi-media'
+      config:
+        maxBytes: 8388608
+        maxSide: 1568

@@ -1,0 +1,22 @@
+{
+  "name": "dsh-ashu-relay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "宿主侧读取对端 agent 消息的投递插件（chat 插件覆盖相反方向）",
+  "main": "lib/index.js",
+  "dsh": {
+    "bundle": {
+      "patch": "cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "talk",
+      "label": "消息投递",
+      "desc": "轮询追加式对话通道，把对端的未读消息 followup 到宿主会话"
+    }
+  },
+  "dependencies": {
+    "dsh-koi-chat": "workspace:*"
+  }
+}

@@ -1,0 +1,6 @@
+- insert:
+    - id: koi-notebook
+      name: 'dsh-koi-notebook'
+      config:
+        # 默认落在 <KOI>/.koi/notebook，和她的其他数据放一起
+        dir: ''

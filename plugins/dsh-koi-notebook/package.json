@@ -1,0 +1,23 @@
+{
+  "name": "dsh-koi-notebook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "笔记本：写长内容（技能步骤 / 事件经过 / 机制状态），平时不注入，用的时候才查",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "memory",
+      "label": "笔记本",
+      "desc": "写长内容（技能/事件/状态），平时不注入，note_open 按需查"
+    }
+  },
+  "license": "MIT"
+}

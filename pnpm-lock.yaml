@@ -1,0 +1,109 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      dsh-koi-chat:
+        specifier: workspace:*
+        version: link:plugins/dsh-koi-chat
+      dsh-koi-decay:
+        specifier: workspace:*
+        version: link:plugins/dsh-koi-decay
+      dsh-koi-gate:
+        specifier: workspace:*
+        version: link:plugins/dsh-koi-gate
+
+  plugins/dsh-ashu-chat:
+    dependencies:
+      dsh-koi-chat:
+        specifier: workspace:*
+        version: link:../dsh-koi-chat
+
+  plugins/dsh-ashu-guardian: {}
+
+  plugins/dsh-ashu-relay:
+    dependencies:
+      dsh-koi-chat:
+        specifier: workspace:*
+        version: link:../dsh-koi-chat
+
+  plugins/dsh-koi-affect:
+    dependencies:
+      dsh-koi-decay:
+        specifier: workspace:*
+        version: link:../dsh-koi-decay
+      dsh-pisces-config:
+        specifier: workspace:*
+        version: link:../dsh-pisces-config
+
+  plugins/dsh-koi-audit:
+    dependencies:
+      dsh-koi-gate:
+        specifier: workspace:*
+        version: link:../dsh-koi-gate
+      dsh-pisces-config:
+        specifier: workspace:*
+        version: link:../dsh-pisces-config
+
+  plugins/dsh-koi-chat:
+    dependencies:
+      dsh-koi-decay:
+        specifier: workspace:*
+        version: link:../dsh-koi-decay
+      dsh-pisces-config:
+        specifier: workspace:*
+        version: link:../dsh-pisces-config
+
+  plugins/dsh-koi-decay: {}
+
+  plugins/dsh-koi-gate:
+    dependencies:
+      dsh-koi-decay:
+        specifier: workspace:*
+        version: link:../dsh-koi-decay
+
+  plugins/dsh-koi-guard: {}
+
+  plugins/dsh-koi-heartbeat:
+    dependencies:
+      dsh-pisces-config:
+        specifier: workspace:*
+        version: link:../dsh-pisces-config
+
+  plugins/dsh-koi-lexicon:
+    dependencies:
+      dsh-koi-decay:
+        specifier: workspace:*
+        version: link:../dsh-koi-decay
+      dsh-pisces-config:
+        specifier: workspace:*
+        version: link:../dsh-pisces-config
+
+  plugins/dsh-koi-media:
+    dependencies:
+      dsh-pisces-config:
+        specifier: workspace:*
+        version: link:../dsh-pisces-config
+
+  plugins/dsh-koi-memory:
+    dependencies:
+      dsh-koi-decay:
+        specifier: workspace:*
+        version: link:../dsh-koi-decay
+      dsh-koi-lexicon:
+        specifier: workspace:*
+        version: link:../dsh-koi-lexicon
+      dsh-pisces-config:
+        specifier: workspace:*
+        version: link:../dsh-pisces-config
+
+  plugins/dsh-koi-notebook: {}
+
+  plugins/dsh-pisces-config: {}
+
+  plugins/dsh-pisces-panel: {}

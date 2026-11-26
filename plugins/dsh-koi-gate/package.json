@@ -1,0 +1,24 @@
+{
+  "name": "dsh-koi-gate",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "出入口判定层：入口管「这条消息该不该叫醒 agent」，出口管「说出来的能不能发」（2026-11-24 由 rules/says/selftalk 三包合并）",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "dependencies": {
+    "dsh-koi-decay": "workspace:*"
+  },
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "gate",
+      "label": "出入口",
+      "desc": "入口：@/点名/连说三条才叫醒；出口：静默词、退场守卫、底稿与内部词判定"
+    }
+  }
+}

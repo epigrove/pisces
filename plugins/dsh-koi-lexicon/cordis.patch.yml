@@ -1,0 +1,20 @@
+# dsh-koi-lexicon —— 词条（人 / 物 / 事）的定义与好恶，按类型分别衰减
+- insert:
+    - id: koi-lexicon
+      name: 'dsh-koi-lexicon'
+      config:
+        # 主人不参与打分（主人在只读核心设定里）
+        ownerOid: owner000
+        # 容量
+        maxPeople: 40
+        maxThings: 40
+        # 注入时每人最多带几条特征
+        descPerPerson: 2
+        # 首次启动从 affect.json / profile.persona.md 迁移（只做一次，原文件不动）
+        migrateFromAffect: true
+        # 曲线参数在 lib/index.js 顶部的 DEFAULT_CURVES 里（性格/态度/物事三种尺度）
+        # ── v3 结构（2026-11-08）──
+        # true  = 注入走「描述三态 + 印象求和 + 钩子」
+        # false = 走旧的 traits + history
+        # 先开着跑几天，有问题把它改回 false 立刻回滚
+        useV3: true

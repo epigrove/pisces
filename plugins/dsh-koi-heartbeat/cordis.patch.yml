@@ -1,0 +1,33 @@
+# dsh-koi-heartbeat —— koi 的自我唤醒
+- insert:
+    - id: koi-heartbeat
+      name: 'dsh-koi-heartbeat'
+      config:
+        enabled: true
+        # 她自己填「下次什么时候醒」，但必须落在这个区间内（分钟）
+        minGapMinutes: 90        # 最快 1.5 小时
+        maxGapMinutes: 900       # 最晚 15 小时（「睡到明天」要能真的睡到上午）
+        # 日常 24 小时内最多醒几次（硬上限，不管她自己选多频繁）
+        dailyCap: 8
+        # 22:00-08:00 活跃窗口：思维更活，但频率照样低
+        nightStartHour: 22
+        nightEndHour: 8
+        nightIntervalFactor: 1.25   # 夜里间隔略放宽（而不是放宽次数）
+        nightExtraCap: 2            # 夜里额外允许 2 次（合计最多 10）
+        # 熟人名单：允许她私聊/找的人（主人固定在里面）
+        ownerName: 主人
+        # 状态/日志目录：默认 ~/.koi（不写死绝对路径，换机器也能跑）
+        # dir: /your/koi/data
+        # 模型：显式配置优先；不填则从活会话继承；都没有就跳过本次心跳并报错
+        # provider: your-provider
+        # model: your-model
+        maxTokens: 700
+        # ── 可选的周期报告（默认关，开源版不启用）──
+        # 本部署在 profile 里打开；profile 不进 git。
+        # leakReport:
+        #   enabled: true
+        #   script: tools/leak-check.mjs
+        #   output: ops/leak-weekly.log
+        #   everyMs: 604800000
+        #   until: '2026-12-11T23:59:59+08:00'
+        #   args: ['7']

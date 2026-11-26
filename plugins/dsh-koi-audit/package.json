@@ -1,0 +1,27 @@
+{
+  "name": "dsh-koi-audit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "外发审计：只记录不拦截（带图有没有描述、括号里有没有内部词），供事后抽样回看",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "observability",
+      "label": "外发审计",
+      "desc": "只记不拦：带图回复有没有视觉细节、括号里有没有内部词，供事后抽样"
+    }
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dsh-pisces-config": "workspace:*",
+    "dsh-koi-gate": "workspace:*"
+  }
+}

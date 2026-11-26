@@ -1,0 +1,16 @@
+# dsh-koi-guard：koi 的护栏，所有「这个动作能不能做」的判定都在这
+# 规则表在 lib/index.js 的 RULES 里，加新护栏改那里就行，不要新建插件。
+- insert:
+    - id: koi-guard
+      name: 'dsh-koi-guard'
+      config:
+        # home 默认 ~/.koi（跟着 homedir 走）。换机器/换用户不用改这里；
+        # 数据不在 ~/.koi 时才需要显式指定：
+        # home: /your/data/.koi
+        #
+        # 她能读/能搜的目录（相对 home）
+        allow:
+          - workspace
+          - profile.persona.md
+          - profile.core.md
+          - lexicon.json

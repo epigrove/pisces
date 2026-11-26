@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+*.pem
+*.key
+*.credentials*
+auth.json
+*.log
+.koi/
+.dsh-home/
+sessions/
+storages/
+attachments/
+.credentials.yaml
+*.corrupt-*
+backups/
+ops/archive/

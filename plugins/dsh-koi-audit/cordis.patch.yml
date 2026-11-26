@@ -1,0 +1,6 @@
+- insert:
+    - id: koi-audit
+      name: 'dsh-koi-audit'
+      config:
+        # 默认落到 <KOI>/.koi/audit.jsonl
+        file: ''

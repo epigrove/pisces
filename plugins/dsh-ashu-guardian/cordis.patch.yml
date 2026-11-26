@@ -1,0 +1,23 @@
+# dsh-ashu-guardian bundle patch
+# ashu 启动时顺手把 koi 拉起来，并定期检查她是否仍在运行
+#
+# 路径与脚本**都必须按部署填写**：下面留空时插件会跳过对应动作并记一条日志，
+# 而不是拿一个不存在的路径硬跑（那会静默失败）。
+- insert:
+    - id: ashu-guardian
+      name: 'dsh-ashu-guardian'
+      config:
+        enabled: true
+        # koi 的启动脚本（前台启动，自带 HOME/DSH_HOME/模型/凭据）
+        script: ''
+        # koi 的工作目录
+        cwd: ''
+        # 多久检查一次她是否仍在运行（毫秒）
+        intervalMs: 60000
+        # 她不在时是否拉起
+        adopt: true
+        # API 全同步脚本（tools/sync-koi-api.mjs 的绝对路径）。
+        # 留空 = 不同步，且日志会明说「跳过」，不会假装成功。
+        syncScript: ''
+        # 2026-11-12：拉起 koi 时不把这里的 MODEL_* 继承给她
+        #（她的模型跟随她自己的会话，不跟随 ashu）。见 cleanEnvForKoi()。

@@ -1,0 +1,16 @@
+# dsh-ashu-relay —— 补上「她发给我」这个没人看的方向
+#
+# dsh-koi-chat 只轮询 from=ashu（提醒她），反方向没有机制。
+# 这个插件定期查 chat.jsonl 里 from=koi 的未读，有就 followup 到我的会话。
+- insert:
+    - id: ashu-relay
+      name: 'dsh-ashu-relay'
+      config:
+        # 多久查一次（分钟）
+        minutes: 3
+        # 回复送到哪个会话（2026-11-12）
+        # 不填（默认）= **自动跟随「人最后说话的那个主会话」**
+        #   - 你用哪个窗口说话，她的回复就回到哪个窗口
+        #   - 子代理会话、我自己塞进去的消息都不算「人说话」
+        # 填了 = 强行钉死到那个会话（想固定在一个窗口时用）
+        # sessionId: session-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

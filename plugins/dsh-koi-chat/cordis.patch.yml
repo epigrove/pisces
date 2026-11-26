@@ -1,0 +1,29 @@
+# dsh-koi-chat bundle patch
+# koi ↔ 人物戊 双向对话通道
+#
+# 2026-11-08：`dsh-koi-iterate` 并进来了，原来的配置一起搬过来。
+# 下面 iterate* 开头的都是原 iterate 插件的配置项。
+- insert:
+    - id: koi-chat
+      name: 'dsh-koi-chat'
+      config:
+        # koi视角：每轮注入最近几条未读
+        # 2026-11-14：不再写死，改由人物戊配置面板 override（.koi/ashu-config.json）控制；
+        # 无 override 时用代码默认 6。写死会盖掉面板。
+        # injectLimit: 6
+        # koi主动找人物戊时，最多连续发几轮就等对方
+        maxOutstanding: 3
+
+        # ── 以下是原 dsh-koi-iterate 的配置（04:00 生成提案）──
+        iterateHour: 4
+        iterateMinute: 0
+        # 2026-11-14：提案模型改由人物戊配置面板 override 控制（.koi/ashu-config.json 的 proposal）；
+        # 无 override 时用代码默认 deepseek-official/deepseek-flash。写死会盖掉面板。
+        # iterateProvider: deepseek-official
+        # iterateModel: deepseek-flash
+        # 喂给它多少最近聊天（memory 插件的短期缓冲）
+        iterateChatDays: 3
+        iterateChatLimit: 60
+        # 它能做什么——必须给：不给的话提案模型看到的是「（未知）」，
+        # 会提一些它根本不具备的能力
+        iterateCapabilities: "QQ 群聊/私聊对话；web_search / web_fetch 联网检索（限长）；read 只读文件（限 .koi/workspace 等白名单，单文件 40KB / 800 行，越界会被拒并说明原因）；身份卡（固定设定只读 + 熟人档案可写）+ 长期记忆（中文检索 + 遗忘曲线 + 注意力召回）；短期记忆（每条群消息进缓冲，按相关度注入）；图片识图（read_image：直接看原图，不经中间描述）；群聊发言门控（@/点名必答；没点名要连说三条才叫醒）"

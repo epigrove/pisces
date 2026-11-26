@@ -1,0 +1,30 @@
+{
+  "name": "dsh-koi-lexicon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "agent 主观世界：词条（人/物/事）的定义与好恶，按类型分别衰减",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "memory",
+      "label": "印象/词条",
+      "desc": "对人的印象、对物的定义与好恶，按类型衰减"
+    }
+  },
+  "dependencies": {
+    "dsh-koi-decay": "workspace:*",
+    "dsh-pisces-config": "workspace:*"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

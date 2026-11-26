@@ -1,0 +1,26 @@
+{
+  "name": "dsh-koi-heartbeat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "agent 自我唤醒：自己决定下一次醒来，醒来时想事、总结、联系对端、看群",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "rhythm",
+      "label": "心跳唤醒",
+      "desc": "自己决定下一次醒来；醒来时想事、总结、联系对端 agent"
+    }
+  },
+  "dependencies": {
+    "dsh-pisces-config": "workspace:*"
+  }
+}

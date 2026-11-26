@@ -1,0 +1,38 @@
+{
+  "name": "dsh-pisces-panel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pisces 配置面板：GUI 左栏入口，读写 koi 的 API/投递/身份路径配置",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    },
+    "pisces": {
+      "category": "base",
+      "label": "配置面板",
+      "desc": "GUI 配置模型、投递会话、身份路径与插件开关；写入 .koi/ashu-config.json"
+    }
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

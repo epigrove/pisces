@@ -1,0 +1,24 @@
+{
+  "name": "dsh-koi-decay",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "衰减数学：幂律权重、并集概率累积、半衰期换算。纯函数，零依赖。",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./sidecar": "./lib/sidecar.js"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "pisces": {
+      "category": "base",
+      "label": "衰减数学/记录信封",
+      "desc": "幂律衰减、记录信封、侧车索引；纯函数，被记忆/印象/情绪共用"
+    }
+  }
+}

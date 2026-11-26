@@ -1,0 +1,8 @@
+# dsh-pisces —— ashu侧的koi配置面板
+# 左栏入口（像 QQ 机器人），面板读/写 koi 配置；API/模型从ashu这边读。
+- insert:
+    - id: pisces-config-config
+      name: 'dsh-pisces-panel'
+      config:
+        # koi 的根目录（换机器改这里或 KOI_HOME 环境变量）
+        koiHome: ''

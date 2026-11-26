@@ -1,0 +1,79 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+
+      - name: install workspace deps
+        run: pnpm install --frozen-lockfile
+
+      - name: syntax check (all js/mjs)
+        run: |
+          fail=0
+          for f in $(find plugins ops tools -name '*.js' -o -name '*.mjs' | grep -v node_modules); do
+            node --check "$f" || fail=1
+          done
+          exit $fail
+
+      - name: no undefined references
+        run: node ops/check-undefined-refs.mjs
+
+      # 自动发现所有 test-*.mjs，不再手写清单——
+      # 手写清单会让新包的测试永远不进 CI（2026-11-16 就是这样漏的）。
+      - name: all package tests
+        run: |
+          fail=0
+          for t in plugins/*/test-*.mjs ops/test-*.mjs; do
+            [ -f "$t" ] || continue
+            echo "=== $t"
+            node "$t" || fail=1
+          done
+          exit $fail
+
+      - name: client module id matches package name
+        run: |
+          # 模块 id 与包名不一致时宿主不报错、只是永不 apply，必须有静态检查。
+          fail=0
+          for d in plugins/*/; do
+            name=$(node -p "require('./$d/package.json').name" 2>/dev/null) || continue
+            client="$d/client.js"
+            [ -f "$client" ] || continue
+            id=$(node -e "
+              const s=require('fs').readFileSync('$client','utf8');
+              const i=s.indexOf('__ModuleLoader__.load(');
+              if(i<0) process.exit(0);
+              const m=s.slice(i,i+800).match(/\\\\bid:\\\\s*['\\\"\`]([^'\\\"\`]+)['\\\"\`]/);
+              if(m) process.stdout.write(m[1]);
+            ")
+            if [ -n "$id" ] && [ "$id" != "$name" ]; then
+              echo "❌ $d: client id '$id' != package name '$name'"; fail=1
+            fi
+          done
+          exit $fail
+
+      - name: privacy scan
+        env:
+          PRIVACY_DENYLIST: ${{ secrets.PRIVACY_DENYLIST }}
+        run: node tools/privacy-scan.mjs --root . --denylist "$PRIVACY_DENYLIST"
+
+      - name: runtime data not tracked
+        run: |
+          fail=0
+          for bad in .koi .credentials.yaml .dsh-home sessions storages attachments; do
+            if git ls-files --error-unmatch "$bad" >/dev/null 2>&1; then
+              echo "❌ 运行态数据被提交：$bad"; fail=1
+            fi
+          done
+          exit $fail
+
+      - name: no hardcoded private paths
+        env:
+          PRIVACY_DENYLIST: ${{ secrets.PRIVACY_DENYLIST }}
+        run: node tools/privacy-scan.mjs --root . --denylist "$PRIVACY_DENYLIST"

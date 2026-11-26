@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# 提交前自检 —— 只查"改完没跑"这一类错
+#
+# 2026-11-07 一天之内踩了三次同一类坑：
+#   1. 心跳 adjustd 变量没声明（node --check 过了，运行时炸）
+#   2. media 插件往冻结对象上赋值（日志打了静默失败，功能没生效）
+#   3. health.mjs 的 now 声明顺序错（进了 git 才发现跑不了）
+#
+# 装法：bash tools/install-hook.sh
+#
+set -uo pipefail
+# git hook 的工作目录可能是 $GIT_DIR（.git/），必须用 GIT_WORK_TREE 或 git rev-parse 定位仓库根
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$(dirname "$0")/../..")"
+cd "$ROOT" || exit 1
+
+FAIL=0
+say() { printf '%s\n' "$*"; }
+
+# ── 1. 改动的 JS 语法 ──
+for f in $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|mjs)$'); do
+  if ! node --check "$f" 2>/dev/null; then
+    say "❌ 语法错误：$f"
+    node --check "$f"
+    FAIL=1
+  fi
+done
+
+# ── 2. 改动的 JS 里有没有"用到了没声明的变量"（node --check 查不出来的那类）──
+# 粗糙但有效：找出形如 `xxx` 的标识符，确认它在文件里至少出现过一次声明或赋值
+for f in $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.js$'); do
+  if grep -qE '^\s*(const|let|var|function)\s+adjusted\b' "$f"; then
+    :
+  elif grep -qE '\badjusted\b' "$f"; then
+    say "⚠️  $f 用了 adjusted 但没声明 —— 先确认不是漏了 const"
+    FAIL=1
+  fi
+done
+
+# ── 3. 改过的工具脚本要能真的跑起来（health.mjs 这类）──
+if git diff --cached --name-only | grep -q 'tools/health.mjs'; then
+  say "→ 跑一遍体检（--json 只校验能否执行）"
+  # health.mjs 有 ❌ 判据时也返回 1，那是「体检发现问题」不是「脚本跑不起来」——
+  # 只有 stderr 非空或者 stdout 不是合法 JSON，才算真的崩了
+  timeout 90 node tools/health.mjs --json >/tmp/.health-out 2>/tmp/.health-err
+  if [ -s /tmp/.health-err ] || ! node -e 'JSON.parse(require("fs").readFileSync("/tmp/.health-out","utf8"))' 2>/dev/null; then
+    say "❌ tools/health.mjs 跑不起来"
+    head -5 /tmp/.health-err
+    FAIL=1
+  fi
+  rm -f /tmp/.health-out /tmp/.health-err
+fi
+
+# ── 4. 改过的插件至少能被 import 一次 ──
+for f in $(git diff --cached --name-only --diff-filter=ACM | grep -E '^plugins/.*/lib/index\.js$'); do
+  # 用临时脚本避免引号嵌套把命令搞坏
+  cat > /tmp/.plugin-import-check.mjs <<JSEOF
+try {
+  await import('file://$(pwd)/$f');
+} catch (e) {
+  console.error(e.message);
+  process.exit(1);
+}
+JSEOF
+  if ! node /tmp/.plugin-import-check.mjs 2>/dev/null; then
+    say "❌ 插件 import 失败：$f"
+    node /tmp/.plugin-import-check.mjs 2>&1 | head -3
+    FAIL=1
+  fi
+done
+rm -f /tmp/.plugin-import-check.mjs
+
+if [ "$FAIL" -ne 0 ]; then
+  say ""
+  say "自检没过，提交已拦下。修完再 git commit。"
+  exit 1
+fi
+exit 0

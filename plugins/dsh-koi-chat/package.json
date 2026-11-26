@@ -1,0 +1,29 @@
+{
+  "name": "dsh-koi-chat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "agent 与对端 agent 的双向对话通道（追加式 JSONL，双方都能发、都能读）",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./lib/chat-store.js": "./lib/chat-store.js",
+    "./lib/sign.js": "./lib/sign.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "talk",
+      "label": "对话通道",
+      "desc": "与对端 agent 的双向文件通道：追加式 JSONL，双方都能读写"
+    }
+  },
+  "dependencies": {
+    "dsh-koi-decay": "workspace:*",
+    "dsh-pisces-config": "workspace:*"
+  }
+}

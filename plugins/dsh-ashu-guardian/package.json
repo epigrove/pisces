@@ -1,0 +1,23 @@
+{
+  "name": "dsh-ashu-guardian",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "agent 进程守护：dsh 启动时按配置拉起对端 agent，掉线自动重启",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "pisces": {
+      "category": "other",
+      "label": "进程守护",
+      "desc": "按配置拉起对端 agent，定期巡检并在掉线后重启"
+    }
+  }
+}

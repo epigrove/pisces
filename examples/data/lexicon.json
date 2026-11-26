@@ -1,0 +1,17 @@
+{
+  "version": 3,
+  "people": {
+    "00000001": {
+      "name": "人物甲",
+      "items": []
+    },
+    "00000002": {
+      "name": "人物乙",
+      "items": []
+    }
+  },
+  "things": {},
+  "self": [],
+  "curves": {},
+  "archive": []
+}

@@ -1,0 +1,9 @@
+# dsh-koi-affect bundle patch（v3：情感由曲线算出，只追加不删除）
+- insert:
+    - id: koi-affect
+      name: 'dsh-koi-affect'
+      config:
+        baseline: 55
+        # 主人不参与好感打分
+        ownerOid: owner000
+        # M3：长期单值心情已停写；多维心情的默认曲线在 lib/mood-dims.js。
