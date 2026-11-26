@@ -1,4 +1,4 @@
 {
-  "title": "agent配置",
-  "description": "人物戊侧的agent配置面板：API/模型选择器（或跟随最近活跃的会话）、提案会话、其它默认。只改 koi，不碰人物戊。"
+  "title": "Agent 配置",
+  "description": "运维侧的 agent 配置面板：API/模型选择器（或跟随最近活跃的会话）、提案会话、其它默认。只改 koi，不碰运维方。"
 }

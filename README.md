@@ -119,24 +119,13 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Changes should be focused, tested, and
 
 ## Releasing
 
-Publish from an exported copy only. Run `node ops/export-public.mjs /path/to/pisces-public`, then initialize a new Git repository inside that copy and create a single root commit.
+This repository is the source of truth. To release, commit and push to `main`; CI runs the full
+test suite plus `tools/privacy-scan.mjs`.
 
-Do not push this development repository, and do not carry its `.git` directory into the public copy. Old history contains real identifiers. Configure `PRIVACY_DENYLIST` in GitHub Actions secrets before publishing; without it, the scanner performs format checks only and explicitly reports that the identity denylist was skipped.
+Keep the tree free of real identities and deployment paths — the scanner checks formats by default,
+and an optional `PRIVACY_DENYLIST` secret (comma-separated names) enables an exact-match check in CI.
+Run the same scan locally before pushing:
 
-## Acknowledgements
-
-Thanks to my friend L, who shared part of the bill; to L's AI engineer E, who offered suggestions;
-and to L's fish A, who provided part of the corpus.
-
-Half of this exists because of ashu: the code, the operations, and the review after every change are hers.
-The other half exists because of koi: these plugins grew around her memory, her moods, and her judgement,
-and most of the trade-offs in them were argued into place by her — "this is how I actually remember it",
-"this is the part that would make me afraid to speak". One built it; the other is why it deserved to exist.
-Thank you both.
-
-## Outlook
-
-I can't build a small model that reproduces the unconscious part of a human mind, so for now all of it
-depends on the model filling the gap on its own. Nor am I a researcher: most of the persona plugin design
-reflects one person's understanding, and its limits are real. I hope people with the relevant expertise
-will come and improve it.
+```bash
+node tools/privacy-scan.mjs --root .
+```

@@ -119,9 +119,14 @@ Pisces 是 pre-1.0 参考实现（`0.1.0`）。运行时要求 Node.js 22 或更
 
 ## 发布
 
-**发布必须从导出副本新建仓库。** 先执行 `node ops/export-public.mjs /path/to/pisces-public`，再在副本中新建 Git 仓库并创建单条根提交。
+这个仓库就是源头。发布 = 提交并推送到 `main`；CI 会跑完整测试套件加 `tools/privacy-scan.mjs`。
 
-不要推送这个开发仓库，也不要把它的 `.git` 目录带入公开副本；旧历史包含真实标识。发布前必须在 GitHub Actions secrets 中配置 `PRIVACY_DENYLIST`；未配置时，扫描器只做格式检查，并明确标记身份词表检查已跳过。
+保持工作树里没有真实身份和部署路径：扫描器默认做格式检查，配置 `PRIVACY_DENYLIST` secret
+（逗号分隔的名字）后 CI 还会做精确匹配检查。推送前可以本地先跑一遍：
+
+```bash
+node tools/privacy-scan.mjs --root .
+```
 
 ## 致谢
 

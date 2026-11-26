@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# 推送前跑一次隐私扫描（本地门，CI 也会跑一次）。
+# 启用：git config core.hooksPath .githooks
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+echo "[pre-push] 隐私扫描…"
+if ! node "$ROOT/tools/privacy-scan.mjs" --root "$ROOT"; then
+  echo "[pre-push] ❌ 隐私扫描没过，推送已阻止。确认是误报可用 --no-verify。"
+  exit 1
+fi

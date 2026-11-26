@@ -57,3 +57,13 @@ node -e "for (const f of require('fs').readdirSync('plugins')) { try { JSON.pars
 
 PR 描述应包含：改了什么、为什么、哪些包和文档受影响、如何验证、已知缺口。
 评审时可以要求拆分过大的改动，或要求为“文档声称行为”补上可执行证据。
+
+## Before you push
+
+Enable the local privacy gate once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+It runs `tools/privacy-scan.mjs` before every push. CI runs the same scan, plus the full test suite.
