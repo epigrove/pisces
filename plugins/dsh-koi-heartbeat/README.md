@@ -1,6 +1,6 @@
 # dsh-koi-heartbeat
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Schedules the agent's self-initiated wake-ups and starts each one as a complete agent turn.
 

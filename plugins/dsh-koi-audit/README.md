@@ -1,6 +1,6 @@
 # dsh-koi-audit
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Writes append-only outbound and quote-checking evidence without blocking messages.
 

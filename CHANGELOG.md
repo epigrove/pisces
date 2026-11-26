@@ -1,13 +1,26 @@
 # Changelog
 
-本项目的重要变更记录在此。格式参考 Keep a Changelog，版本遵循语义化版本。
+[中文](./CHANGELOG.zh-CN.md) | English
+
+Important changes to this project are recorded here. The format follows
+[Keep a Changelog](https://keepachangelog.com/), and versions follow semantic
+versioning.
 
 ## [0.1.0] - 2026-11-26
 
-首个开源参考版本，包含以下主要能力：
+Initial open-source reference release, with the following major capabilities:
 
-- 提供 16 个 DSH 插件包，覆盖双 agent 记忆、情绪、印象、对话、门控、媒体、审计、笔记本和宿主管护。
-- 四层记忆采用追加式账本、幂律衰减与侧车标记；中期使用 `stale`，长期使用 `obsolete`，都不物理删除原文。
-- 将 rules、says、selftalk 合并为 `dsh-koi-gate`；出口不再按括号或内部词的内容形状拦截，改为提示词自律与事后审计。
-- 引入 `source.person` 结构化身份与 legacy 兜底；外发审计增加带图描述检查、引号回查和张冠李戴记录。
-- 完成发布前加固：补齐插件元数据、CI 隐私/路径扫描、例子与文档校准，并修复公开副本安装和测试假绿问题。
+- 16 DSH plugin packages covering dual-agent memory, emotion, impressions,
+  conversation, gating, media, audit, notebooks, and host guardianship.
+- Four-layer memory uses an append-only ledger, power-law decay, and sidecar
+  markers. Medium-term entries use `stale`, long-term entries use `obsolete`,
+  and original text is never physically deleted.
+- `rules`, `says`, and `selftalk` were merged into `dsh-koi-gate`. Outbound
+  content is no longer blocked based on the shape of brackets or internal
+  words; the design now relies on prompt self-discipline and post-hoc audit.
+- Added structured identity through `source.person` with a legacy fallback.
+  Outbound audit now checks image descriptions, traces quoted text, and records
+  misattribution.
+- Completed pre-release hardening: filled in plugin metadata, added CI privacy
+  and path scans, aligned examples and documentation, and fixed public-copy
+  installation and false-green test failures.

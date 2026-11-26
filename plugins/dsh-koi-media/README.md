@@ -1,6 +1,6 @@
 # dsh-koi-media
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Handles inbound image transcription, persistent image inventory, and first-frame extraction for video messages.
 

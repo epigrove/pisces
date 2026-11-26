@@ -1,6 +1,6 @@
 # dsh-koi-affect
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Maintains the agent's changing internal state: energy, named mood dimensions, time context, and a short-lived residue from recall.
 

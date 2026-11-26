@@ -1,6 +1,6 @@
 # dsh-koi-gate
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Controls what may wake the agent, what must be suppressed before sending, and whether a platform send actually succeeded.
 

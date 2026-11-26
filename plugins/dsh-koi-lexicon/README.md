@@ -1,6 +1,6 @@
 # dsh-koi-lexicon
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Maintains identity anchors and subjective records about people, things, events, and the agent's own later commitments.
 

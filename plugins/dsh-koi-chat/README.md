@@ -1,6 +1,6 @@
 # dsh-koi-chat
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Provides the agent's HMAC-aware, append-only conversation channel with the operator and Pisces owner, plus a daily proposal loop.
 

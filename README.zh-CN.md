@@ -42,7 +42,7 @@ Pisces 在同一套 Cordis 插件系统上运行两个独立 agent。二者各�
 | 给你打八分 | 放行 | 正常夸人，数字不应被误伤 |
 | v2 那些分数我先记着 | 放行 | 不再按内部专名的形状拦截 |
 
-`allow()` 只硬拦静默词和重复的退场语句。括号草稿、空转小结和内部专名不按内容形状过滤；它们依靠提示词自律，并由 `dsh-koi-audit` 事后记录。详见 [docs/CHANNEL.md](./docs/CHANNEL.md)。
+`allow()` 只硬拦静默词和重复的退场语句。括号草稿、空转小结和内部专名不按内容形状过滤；它们依靠提示词自律，并由 `dsh-koi-audit` 事后记录。详见 [docs/CHANNEL.md](./docs/CHANNEL.zh-CN.md)。
 
 ### 三个设计取舍
 
@@ -82,7 +82,7 @@ Pisces 在同一套 Cordis 插件系统上运行两个独立 agent。二者各�
 node examples/walkthrough.mjs  # 三十秒看懂设计
 ```
 
-示例脚本不写文件，也不连接服务。接着阅读[快速开始](./docs/QUICKSTART.md)与[通道接入](./docs/CHANNEL.md)。
+示例脚本不写文件，也不连接服务。接着阅读[快速开始](./docs/QUICKSTART.zh-CN.md)与[通道接入](./docs/CHANNEL.zh-CN.md)。
 
 ## 目录
 
@@ -97,17 +97,17 @@ tools/     体检、隐私与审计脚本
 
 ## 文档
 
-- [快速开始](./docs/QUICKSTART.md)：配置一个能运行的 agent
-- [架构](./docs/ARCHITECTURE.md)：数据模型与设计取舍
-- [通道](./docs/CHANNEL.md)：接入其他传输方式
-- [身份](./docs/IDENTITY.md)：身份与人设配置
+- [快速开始](./docs/QUICKSTART.zh-CN.md)：配置一个能运行的 agent
+- [架构](./docs/ARCHITECTURE.zh-CN.md)：数据模型与设计取舍
+- [通道](./docs/CHANNEL.zh-CN.md)：接入其他传输方式
+- [身份](./docs/IDENTITY.zh-CN.md)：身份与人设配置
 - [示例](./examples/README.md)：走查脚本与样例记录
 
 ## 状态
 
 Pisces 是 pre-1.0 参考实现（`0.1.0`）。运行时要求 Node.js 22 或更高版本；CI 使用 Node.js 24。上面的包数量来自当前仓库结构。
 
-仓库隐私检查由 `tools/privacy-scan.mjs` 负责，与 CI 和公开副本导出使用同一脚本。`ops/report-leaks.sh` 只汇总运行时外发内容，不扫描仓库。
+仓库隐私检查由 `tools/privacy-scan.mjs` 负责，CI 每次推送前跑的就是它。`ops/report-leaks.sh` 只汇总运行时外发内容，不扫描仓库。
 
 ## 许可
 

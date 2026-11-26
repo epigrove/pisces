@@ -1,6 +1,15 @@
-# 命名自由 / Naming freedom
+# Naming freedom
 
-- 插件包名沿用参考实现姐妹名：`dsh-koi-*`（参考 agent）/ `dsh-ashu-*`（运维 agent）。
-- **你的 agent 名字、自称、人设完全自主**：通过 env `KOI_AGENT_NAME`、`KOI_SELF_TITLE`
-  或 profile config 覆盖；提示词用 `prompts/system.template.md` 的 {{agentName}}/{{selfTitle}}/{{persona}}。
-- 仓库不含任何真人记忆/隐私；提示词与记忆和仓库隔离，部署只更新插件代码。
+[中文](./NAMING.zh-CN.md) | English
+
+- Plugin package names retain the sibling names from the reference
+  implementation: `dsh-koi-*` (reference agent) and `dsh-ashu-*` (operations
+  agent).
+- **Your agent's name, self-description, and persona are entirely yours to
+  define.** Override them with the `KOI_AGENT_NAME` and `KOI_SELF_TITLE`
+  environment variables or through profile config. Prompts use
+  `{{agentName}}`, `{{selfTitle}}`, and `{{persona}}` from
+  `prompts/system.template.md`.
+- The repository contains no real person's memory or private data. Prompts and
+  memory are isolated from the repository, and deployment only updates plugin
+  code.

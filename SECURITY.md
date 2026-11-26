@@ -1,42 +1,54 @@
 # Security Policy
 
-## 支持范围
+[中文](./SECURITY.zh-CN.md) | English
 
-Pisces 处于 pre-1.0 阶段。安全修复进入默认分支（当前 `master`）；当前不对旧版本提供长期支持分支。
-报告漏洞时请附上受影响的 commit、包名和可复现条件。
+## Supported versions
 
-## 私下报告漏洞
+Pisces is pre-1.0. Security fixes are applied to the default branch, currently
+`master`; there are no long-term support branches for older versions. Include
+the affected commit, package name, and conditions required to reproduce the
+issue in every vulnerability report.
 
-**不要为未修复漏洞开公开 issue，也不要在 issue 中粘贴利用代码、凭据或真实聊天数据。**
+## Report vulnerabilities privately
 
-请优先使用 GitHub 仓库的 **Security → Report a vulnerability** 私有安全公告渠道。
-如果该入口不可用，请通过仓库维护者 GitHub 主页所列的私下联系方式联系维护者；
-联系时先只说明“需要私下报告安全问题”，不要在首条消息里附敏感细节。
+**Do not open a public issue for an unfixed vulnerability, and do not paste
+exploit code, credentials, or real chat data into an issue.**
 
-报告建议包含：
+Prefer the GitHub repository's private security advisory channel: **Security →
+Report a vulnerability**. If that channel is unavailable, contact the
+maintainers through a private contact method listed on their GitHub profiles.
+In your first message, say only that you need to report a security issue
+privately; do not include sensitive details yet.
 
-- 受影响的包、版本或 commit；
-- 漏洞类型和影响；
-- 最小复现步骤或 PoC；
-- 触发所需的配置/权限；
-- 已脱敏的日志；
-- 你建议的修复方向（可选）。
+A report should include:
 
-## 重点范围
+- the affected package, version, or commit;
+- the vulnerability type and impact;
+- minimal reproduction steps or a proof of concept;
+- the configuration and permissions required to trigger the issue;
+- redacted logs;
+- a suggested direction for the fix (optional).
 
-欢迎报告但不限于：
+## Scope
 
-- `dsh-koi-guard` 路径白名单绕过；
-- 出口门控、消息签名或投递去重绕过；
-- 通过提示注入、工具调用或记忆注入泄露秘密；
-- 面板路由缺少鉴权、凭据回显或越权写入；
-- 隐私扫描、发布副本或 CI 中泄露真实标识符；
-- 依赖、补丁或插件加载链上的任意代码执行风险。
+Reports are welcome for issues including, but not limited to:
 
-测试时请使用自己的测试部署和脱敏数据。不要访问、修改或外传他人的 agent 数据、
-账号、凭据和会话记录。
+- bypasses of the `dsh-koi-guard` path allowlist;
+- bypasses of outbound gating, message signing, or delivery deduplication;
+- secret disclosure through prompt injection, tool calls, or memory injection;
+- missing authentication on panel routes, credential reflection, or
+  unauthorized writes;
+- disclosure of real identifiers by privacy scans, published copies, or CI;
+- arbitrary code execution risks in dependencies, patches, or the plugin
+  loading chain.
 
-## 处理方式
+Use your own test deployment and redacted data. Do not access, modify, or
+disclose another person's agent data, accounts, credentials, or session
+records.
 
-维护者会先确认报告、评估影响并准备修复。公开披露时间应与维护者协调，
-留出升级和部署窗口；不要在修复发布前公开可直接利用的细节。
+## Handling
+
+Maintainers will first confirm the report, assess its impact, and prepare a
+fix. Coordinate the public disclosure date with the maintainers and leave time
+for upgrading and deploying the fix. Do not publish directly exploitable
+details before the fix is released. No response-time SLA is promised.

@@ -107,7 +107,7 @@ tools/     health, privacy, and audit scripts
 
 Pisces is a pre-1.0 reference implementation (`0.1.0`). Runtime support starts at Node.js 22; CI uses Node.js 24. The package counts above reflect the current repository tree.
 
-Repository privacy checks use `tools/privacy-scan.mjs`, the same scanner used by CI and the public-copy export. `ops/report-leaks.sh` only summarizes runtime outbound content; it does not scan the repository.
+Repository privacy checks use `tools/privacy-scan.mjs`, the same scanner CI runs before every push. `ops/report-leaks.sh` only summarizes runtime outbound content; it does not scan the repository.
 
 ## License
 

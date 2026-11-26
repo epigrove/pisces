@@ -1,6 +1,6 @@
 # dsh-koi-guard
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Enforces deterministic filesystem boundaries for the agent's read, search, and write tools.
 

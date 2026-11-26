@@ -1,6 +1,6 @@
 # dsh-koi-memory
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Stores layered long-term context, recent conversation, and fact records while keeping source data append-oriented.
 

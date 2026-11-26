@@ -1,12 +1,21 @@
 # Code of Conduct
 
-参与本项目时，请围绕事实和代码讨论，尊重不同经验背景的参与者。
+[中文](./CODE_OF_CONDUCT.zh-CN.md) | English
 
-不可接受的行为包括：骚扰、威胁、歧视、人肉搜索、未经允许发布他人隐私或聊天数据、
-恶意刷屏，以及持续打断技术讨论。
+Discuss facts and code, and respect participants with different levels of
+experience and different backgrounds.
 
-发现问题时，请通过维护者 GitHub 主页所列的私下渠道联系维护者。安全问题按
-[SECURITY.md](./SECURITY.md) 私下报告，不要公开披露漏洞细节。
+Unacceptable behavior includes personal attacks, harassment, threats,
+discrimination, doxxing, publishing another person's private information or
+chat data without permission, malicious spamming, and repeatedly derailing or
+interrupting technical discussions.
 
-维护者可以删除不当内容、关闭讨论或 PR，并根据严重程度给出警告、临时限制或永久禁止参与。
-处理决定应说明依据；申诉可通过同一私下渠道提出。
+Report problems through a private channel listed on the maintainers' GitHub
+profiles. Report security issues according to [SECURITY.md](./SECURITY.md) and
+do not publicly disclose vulnerability details.
+
+Maintainers may remove inappropriate content, including comments, and may close
+discussions or pull requests. Depending on severity, they may issue a warning,
+impose a temporary restriction, or permanently ban a participant. They should
+explain the basis for a moderation decision. Appeals may be submitted through
+the same private channel.

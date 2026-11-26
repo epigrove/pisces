@@ -1,6 +1,6 @@
 # dsh-koi-decay
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Shared decay math and record-index primitives for memories, impressions, emotions, and visibility decisions.
 

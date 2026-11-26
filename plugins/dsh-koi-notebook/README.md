@@ -1,6 +1,6 @@
 # dsh-koi-notebook
 
-[中文](./README.cn.md) | English
+[中文](./README.zh-CN.md) | English
 
 Stores long-form skills, events, and mechanism notes outside the always-injected memory context.
 

@@ -1,10 +1,15 @@
 # Contributing to Pisces
 
-感谢参与。Pisces 目前是 pre-1.0 参考实现，优先接受范围清楚、能验证、不会把部署私密数据带进仓库的改动。
+[中文](./CONTRIBUTING.zh-CN.md) | English
 
-## 开发环境
+Thank you for contributing. Pisces is currently a pre-1.0 reference
+implementation. Contributions are most likely to be accepted when their scope
+is clear, their behavior can be verified, and they do not bring private
+deployment data into the repository.
 
-需要 Node.js 22 或更高版本（CI 使用 Node.js 24）和 pnpm。
+## Development setup
+
+You need Node.js 22 or newer (CI uses Node.js 24) and pnpm.
 
 ```bash
 ./install.sh --check
@@ -12,23 +17,35 @@
 node examples/walkthrough.mjs
 ```
 
-依赖和包间链接由 pnpm workspace 生成。不要提交或用脚本创建手工 `node_modules` 软链。
+pnpm workspaces create dependencies and links between packages. Do not commit
+hand-written `node_modules` symlinks, and do not create them with scripts.
 
-## 改一处，查一圈
+## Change one thing, then follow every reference
 
-“改一处”不是只改当前文件。提交前至少检查下面这条引用链，能命中的都要同步：
+"Change one thing" does not mean changing only the file where the change
+originates. Before submitting, inspect at least this chain of references and
+update every affected location:
 
-1. 用 `rg -n '<旧名字或旧行为>'` 搜代码、测试、`cordis.patch.yml`、README、docs 和示例。
-2. 检查包名、插件 `id`、客户端模块 `id`、`dsh.pisces` 元数据、HTTP 路由和 `cordis.patch.yml` 是否仍一致。
-3. 检查跨包 import 是否仍走包名；不要改成 `../../` 或部署机器上的绝对路径。
-4. 修改行为时补或更新最近的测试；不能补测试时，在 PR 里写清缺口和手工验证步骤。
-5. 更新受影响的文档。文档必须描述现在的代码，不描述计划中的接口。
+1. Run `rg -n '<old name or old behavior>'` across code, tests,
+   `cordis.patch.yml`, the README, docs, and examples.
+2. Check that package names, plugin `id` values, client module `id` values,
+   `dsh.pisces` metadata, HTTP routes, and `cordis.patch.yml` remain consistent.
+3. Confirm that cross-package imports still use package names. Do not replace
+   them with `../../` paths or absolute paths from a deployment machine.
+4. Add or update the nearest test when changing behavior. If a test cannot be
+   added, describe the gap and the manual verification steps in the pull
+   request.
+5. Update affected documentation. Documentation must describe the code as it
+   exists now, not an interface that is only planned.
 
-新增或删除插件包时，还要同步根 README 的 16 包清单、README/测试覆盖数量，以及架构文档的插件表。
+When adding or removing a plugin package, also update the 16-package list and
+the README/test counts in the root README, as well as the plugin table in the
+architecture documentation.
 
-## 测试要求
+## Testing requirements
 
-Pull request 在合并前必须通过现有测试，并优先补上覆盖改动的测试。
+A pull request must pass the existing tests before it can be merged. Prefer
+adding tests that exercise the change.
 
 ```bash
 ./install.sh
@@ -37,26 +54,36 @@ git diff --check
 node -e "for (const f of require('fs').readdirSync('plugins')) { try { JSON.parse(require('fs').readFileSync('plugins/'+f+'/package.json')) } catch(e){ console.log('坏 JSON:', f) } }"
 ```
 
-`install.sh` 自动发现 `plugins/*/test-*.mjs` 和 `ops/test-*.mjs`。新增测试文件必须：
+`install.sh` automatically discovers `plugins/*/test-*.mjs` and
+`ops/test-*.mjs`. Every new test file must:
 
-- 文件名匹配 `test-*.mjs`；
-- 失败时以非零退出码结束；
-- 在输出中打印一行 `N 通过 / M 失败` 汇总，`install.sh` 用它统计断言数。
+- use a filename that matches `test-*.mjs`;
+- exit with a non-zero status when it fails;
+- print one summary line as `N 通过 / M 失败`, exactly as consumed by
+  `install.sh`. `install.sh` uses this line to count assertions.
 
-不要只加一个永远不会失败的展示脚本。涉及 IO 的测试应使用 `mkdtemp()` 或显式临时目录，结束后不要依赖仓库内残留状态。
+Do not add only a display script that can never fail. Tests that perform I/O
+must use `mkdtemp()` or an explicit temporary directory and must not depend on
+state left in the repository after they finish.
 
-## 提交内容
+## What to submit
 
-- 一个 PR 解决一个清楚的问题，避免夹带无关重构。
-- 不提交 `.koi/`、`.credentials.yaml`、会话目录、真实平台 id、真实昵称、聊天记录或日志。
-- 不提交 `node_modules/` 或生成的 pnpm store 内容。
-- 修改安全边界、身份、出口判定或记忆账本时，在 PR 描述中写明兼容性和回滚方式。
-- 提交的代码按仓库的 MIT License 授权。
+- Use one pull request for one clearly defined problem, without unrelated
+  refactoring.
+- Do not commit `.koi/`, `.credentials.yaml`, session directories, real
+  platform IDs, real display names, chat histories, or logs.
+- Do not commit `node_modules/` or generated pnpm store contents.
+- When changing security boundaries, identity, outbound decisions, or the
+  memory ledger, state compatibility and rollback considerations in the pull
+  request description.
+- Submitted code is licensed under the repository's MIT License.
 
-## Pull request
+## Pull requests
 
-PR 描述应包含：改了什么、为什么、哪些包和文档受影响、如何验证、已知缺口。
-评审时可以要求拆分过大的改动，或要求为“文档声称行为”补上可执行证据。
+A pull request description should state what changed, why it changed, which
+packages and documents are affected, how it was verified, and what gaps remain.
+Reviewers may ask for an oversized change to be split or for executable
+evidence that supports a documented behavior.
 
 ## Before you push
 
@@ -66,4 +93,5 @@ Enable the local privacy gate once per clone:
 git config core.hooksPath .githooks
 ```
 
-It runs `tools/privacy-scan.mjs` before every push. CI runs the same scan, plus the full test suite.
+It runs `tools/privacy-scan.mjs` before every push. CI runs the same scan, plus
+the full test suite.
