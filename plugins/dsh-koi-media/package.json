@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "图片库存、视频首帧与带图消息自动识图（读取前限流，库存路径受限）",
+  "description": "Image inventory, video first frames, and automatic transcription of inbound images.",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",

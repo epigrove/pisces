@@ -2,7 +2,7 @@
   "name": "dsh-koi-notebook",
   "version": "1.0.0",
   "private": true,
-  "description": "笔记本：写长内容（技能步骤 / 事件经过 / 机制状态），平时不注入，用的时候才查",
+  "description": "Long-form notes kept out of the prompt: sections are opened on demand.",
   "type": "module",
   "main": "./lib/index.js",
   "exports": {

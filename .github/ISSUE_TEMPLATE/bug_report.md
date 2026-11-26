@@ -6,40 +6,40 @@ labels: bug
 assignees: ""
 ---
 
-## 先确认
+## Before filing
 
-- [ ] 我已搜索现有 issue，没有找到相同问题。
-- [ ] 我已移除真实用户 id、昵称、聊天记录、凭据和部署私有路径。
+- [ ] I searched existing issues and found no duplicate.
+- [ ] I removed real user ids, nicknames, chat logs, credentials, and private deployment paths.
 
-## 受影响部分
+## Affected part
 
-- 包名或文档路径：
-- 版本、commit 或分支：
+- Package name or documentation path:
+- Version, commit, or branch:
 
-## 现象
+## What happens
 
-**预期行为：**
+**Expected behaviour:**
 
-**实际行为：**
+**Actual behaviour:**
 
-**最小复现步骤：**
+**Minimal reproduction:**
 
 1.
 2.
 3.
 
-## 环境
+## Environment
 
-- OS：
-- Node.js：
-- pnpm：
-- DSH 版本：
-- 相关插件配置（脱敏）：
+- OS:
+- Node.js:
+- pnpm:
+- DSH version:
+- Relevant plugin config (redacted):
 
-## 日志与证据
+## Logs and evidence
 
-请粘贴最小、脱敏的日志或测试输出。不要粘贴真实 `.koi/` 数据、openid、QQ 号或凭据。
+Paste the smallest redacted log or test output. Do not paste real `.koi/` data, openids, QQ numbers, or credentials.
 
-## 额外信息
+## Additional context
 
-如果这是文档与代码不一致，请指出双方的具体文件和行号。
+If this is a documentation/code mismatch, point to the exact files and lines on both sides.

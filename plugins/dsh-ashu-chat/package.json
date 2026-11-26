@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Pisces 聊天：宿主侧与对端 agent 的对话面板。新建并固定一个会话，直接在这里收发。",
+  "description": "Operator-side chat panel: a pinned session that reads and writes the shared channel.",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js"

@@ -36,7 +36,7 @@ exponential decay hits exactly zero one day, and zero means deletion — yet "co
 | `data/medium.jsonl` | Medium-term memory: power-law decay, fades |
 | `data/long.jsonl` | Long-term memory: no decay |
 | `data/lexicon.json` | Impression lexicon: how the agent sees people and things |
-| `persona.template.md` | A neutral persona template — fill it in yourself |
+| `persona.template.md` | A neutral persona template (English); `persona.template.zh-CN.md` is the Chinese one |
 
 One record looks like this:
 

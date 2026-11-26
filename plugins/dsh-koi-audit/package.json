@@ -2,7 +2,7 @@
   "name": "dsh-koi-audit",
   "version": "1.0.0",
   "private": true,
-  "description": "外发审计：只记录不拦截（带图有没有描述、括号里有没有内部词），供事后抽样回看",
+  "description": "Outbound audit: records what was really sent and grades quoted speech against the source.",
   "type": "module",
   "main": "./lib/index.js",
   "exports": {

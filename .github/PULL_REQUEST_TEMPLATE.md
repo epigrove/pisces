@@ -1,39 +1,39 @@
-## 摘要
+## Summary
 
-说明这个 PR 解决的问题和最终行为。
+What problem does this PR solve, and what is the resulting behaviour?
 
-## 改动范围
+## Scope
 
-- 涉及的包或文档：
-- 是否改变配置、数据格式、路由或插件 id：
-- 是否需要迁移或重启：
+- Packages or documents touched:
+- Does it change configuration, data format, routes, or plugin ids:
+- Does it need a migration or a restart:
 
-## 改一处查一圈
+## Check the blast radius
 
-- [ ] 我搜索了旧包名、旧路由、旧术语和旧行为的全部引用。
-- [ ] 包名、插件 id、客户端模块 id、`dsh.pisces` 元数据和 `cordis.patch.yml` 保持一致。
-- [ ] 跨包 import 使用包名，没有新增部署机器绝对路径或手工软链。
-- [ ] README/docs/examples 与实际代码一致；新增或删除插件时更新了完整清单。
+- [ ] I searched every reference to old package names, routes, terminology, and behaviour.
+- [ ] Package name, plugin id, client module id, `dsh.pisces` metadata, and `cordis.patch.yml` stay consistent.
+- [ ] Cross-package imports use package names; no new machine-absolute paths or manual symlinks.
+- [ ] README/docs/examples match the code; adding or removing a plugin updated the full list.
 
-## 验证
+## Verification
 
 - [ ] `./install.sh`
 - [ ] `node examples/walkthrough.mjs`
 - [ ] `git diff --check`
-- [ ] 所有改动的 `package.json` 可被 `JSON.parse` 解析
-- [ ] 新增/修改行为有测试覆盖，或在下文说明为什么暂时不能补
+- [ ] Every changed `package.json` parses as JSON
+- [ ] New or changed behaviour is covered by a test, or the text below explains why not
 
-验证输出或手工步骤：
+Verification output or manual steps:
 
 ```text
 
 ```
 
-## 风险与回滚
+## Risk and rollback
 
-说明兼容性、数据风险、安全影响和回滚方式。
+Describe compatibility, data risk, security impact, and how to roll back.
 
-## 隐私检查
+## Privacy check
 
-- [ ] 未提交真实用户数据、日志、openid、昵称、聊天记录或凭据。
-- [ ] 示例和测试只使用占位数据。
+- [ ] No real user data, logs, openids, nicknames, chat logs, or credentials.
+- [ ] Examples and tests use placeholder data only.

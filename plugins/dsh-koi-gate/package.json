@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "出入口判定层：入口管「这条消息该不该叫醒 agent」，出口管「说出来的能不能发」（2026-11-24 由 rules/says/selftalk 三包合并）",
+  "description": "Inbound and outbound gate: what wakes the agent, and what may leave as text.",
   "exports": {
     ".": "./lib/index.js"
   },
@@ -18,7 +18,7 @@
     "pisces": {
       "category": "gate",
       "label": "出入口",
-      "desc": "入口：@/点名/连说三条才叫醒；出口：静默词、退场守卫、底稿与内部词判定"
+      "desc": "入口：@/点名/别名硬放行 + 其余软判官；出口：只硬拦静默词与退场连击（不按内容形状猜）"
     }
   }
 }

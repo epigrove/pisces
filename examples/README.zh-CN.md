@@ -35,7 +35,7 @@ node examples/walkthrough.mjs
 | `data/medium.jsonl` | 中期记忆：幂律衰减，会变淡 |
 | `data/long.jsonl` | 长期记忆：不衰减 |
 | `data/lexicon.json` | 印象词典：人对人/物的看法 |
-| `persona.template.md` | 中性人设模板，自己填 |
+| `persona.template.zh-CN.md` | 中性人设模板（中文），自己填；英文版是 `persona.template.md` |
 
 一条记忆长这样：
 

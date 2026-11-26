@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "agent 与对端 agent 的双向对话通道（追加式 JSONL，双方都能发、都能读）",
+  "description": "Two-way file channel between the two agents: append-only JSONL, both sides read and write.",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",

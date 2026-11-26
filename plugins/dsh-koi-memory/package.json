@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "QQ 机器人长期记忆 v8：中文 bigram 召回 + 分层注入，只增不删",
+  "description": "Four-tier memory v8: short-term window, medium-term facts, long-term ledger, legacy facts.",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",

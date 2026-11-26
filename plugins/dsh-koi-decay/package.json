@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "衰减数学：幂律权重、并集概率累积、半衰期换算。纯函数，零依赖。",
+  "description": "Power-law decay: weights, half-life conversion, record envelope, sidecar index. Pure functions.",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",

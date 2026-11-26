@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "agent 进程守护：dsh 启动时按配置拉起对端 agent，掉线自动重启",
+  "description": "Process supervisor: probes the peer agent and restarts it through a configured launcher.",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",

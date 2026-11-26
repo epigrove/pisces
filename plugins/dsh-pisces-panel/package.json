@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Pisces 配置面板：GUI 左栏入口，读写 koi 的 API/投递/身份路径配置",
+  "description": "Web panel for model routes, channel settings, plugin switches, and credentials.",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "agent 主观世界：词条（人/物/事）的定义与好恶，按类型分别衰减",
+  "description": "People, things, and impressions: the agent's subjective world, with typed decay.",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",
@@ -16,7 +16,7 @@
     "pisces": {
       "category": "memory",
       "label": "印象/词条",
-      "desc": "对人的印象、对物的定义与好恶，按类型衰减"
+      "desc": "对人的印象、对物的定义与好恶；描述三态 + 印象求和，默认曲线不分类"
     }
   },
   "dependencies": {

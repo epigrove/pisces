@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "宿主侧读取对端 agent 消息的投递插件（chat 插件覆盖相反方向）",
+  "description": "Delivery side that wakes the operator agent when the peer has written something.",
   "main": "lib/index.js",
   "dsh": {
     "bundle": {

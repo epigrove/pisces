@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Pisces 框架配置的唯一读口：agent 命名 / AI provider 与模型 / 投递会话。GUI 面板可改。",
+  "description": "Shared config, identity, and data-directory resolution for the Pisces plugin set.",
   "exports": {
     ".": "./lib/index.js",
     "./ai-config": "./lib/ai-config.mjs",
@@ -15,7 +15,7 @@
     "pisces": {
       "category": "base",
       "label": "配置读口",
-      "desc": "模型与会话选取的唯一读口；纯函数，两边共用"
+      "desc": "模型与会话选取、身份解析、数据目录解析的统一入口（会读配置文件）"
     }
   }
 }

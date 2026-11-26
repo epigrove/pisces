@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "agent 自我唤醒：自己决定下一次醒来，醒来时想事、总结、联系对端、看群",
+  "description": "Self-wakeup: the agent schedules its own next wake-up within configured gaps.",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",
