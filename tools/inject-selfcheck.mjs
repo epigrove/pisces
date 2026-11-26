@@ -14,9 +14,16 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const KOI = (process.env.KOI_HOME ?? homedir());
+/**
+ * 2026-11-27：**路径按脚本位置推导**。
+ * 原来用 `KOI_HOME ?? homedir()`：从运维 shell 里跑 health 时 HOME 是运维方家目录，
+ * 于是去 <家目录>/plugins 找插件，直接 ERR_MODULE_NOT_FOUND。
+ * 脚本在 `<agent>/tools/` 下，所以上一级就是 agent 根。
+ */
+const KOI = process.env.KOI_HOME ?? join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = join(KOI, '.koi');
 const STATE = join(DATA, 'inject-check.json');
 const UPDATE = process.argv.includes('--update');
@@ -38,7 +45,7 @@ for (const name of plugins) {
   mod.apply(ctx, { dir: DATA, ownerOid: 'owner000' });
 }
 
-const base = { sections: [] };
+const base = { sections: [], contexts: [] };
 let out = base;
 for (const fn of handlers) {
   const prev = out;
@@ -50,7 +57,10 @@ for (const fn of handlers) {
   }
 }
 
-const sections = (out.sections ?? []).filter((s) => typeof s.text === 'string' && s.text !== '');
+const sections = [
+  ...(out.sections ?? []),
+  ...(out.contexts ?? []),
+].filter((s) => typeof s.text === 'string' && s.text !== '');
 const shape = sections.map((s) => ({ name: s.name, chars: s.text.length }));
 const total = shape.reduce((n, s) => n + s.chars, 0);
 
@@ -65,10 +75,21 @@ const prev = (() => {
 const problems = [];
 if (prev) {
   if (shape.length < prev.shape.length) problems.push(`段数 ${prev.shape.length} → ${shape.length}`);
+  /**
+   * 2026-11-27：段名从 `qqbot:memory` 改成 `koi:memory`（注入通道也换成 contexts）。
+   * 旧基线里存的是旧名，直接比对会报一次「缺了 qqbot:memory 段」的假警报。
+   * 这里按迁移表把旧名映射到新名。
+   */
+  const RENAMED = { 'qqbot:memory': 'koi:memory' };
+  /** 旧的 koi:lexicon 现在拆成 koi:identity（系统段）+ koi:lexicon（上下文），字数要合并比 */
+  const SPLIT = { 'koi:lexicon': ['koi:identity', 'koi:lexicon'] };
   for (const p of prev.shape) {
-    const now = shape.find((s) => s.name === p.name);
-    if (now === undefined) problems.push(`缺了 ${p.name} 段`);
-    else if (p.chars >= 80 && now.chars < p.chars * 0.6) problems.push(`${p.name} 字数 ${p.chars} → ${now.chars}`);
+    const want = RENAMED[p.name] ?? p.name;
+    const names = SPLIT[want] ?? [want];
+    const found = names.map((n) => shape.find((s) => s.name === n)).filter(Boolean);
+    const nowChars = found.reduce((n, s) => n + s.chars, 0);
+    if (found.length === 0) problems.push(`缺了 ${want} 段`);
+    else if (p.chars >= 80 && nowChars < p.chars * 0.6) problems.push(`${p.name} 字数 ${p.chars} → ${nowChars}`);
   }
 }
 
@@ -78,5 +99,10 @@ if (problems.length > 0 && !UPDATE) {
   console.log(`   现在：${line}`);
   process.exit(1);
 }
-if (!UPDATE) writeFileSync(STATE, JSON.stringify({ at: Date.now(), total, shape }, null, 1));
+/**
+ * 2026-11-27 修：--update 原来**只打印 ✅、不写基线**（写状态被 `!UPDATE` 挡住了），
+ * 于是"更新基线"这个动作是假的，下一次照旧报缩水。
+ * 现在：--update 明确重写基线（这是它的全部意义）。
+ */
+if (UPDATE || problems.length === 0) writeFileSync(STATE, JSON.stringify({ at: Date.now(), total, shape }, null, 1));
 console.log(`✅ ${line}`);

@@ -62,13 +62,23 @@ function fakeContext() {
   };
 }
 
-async function assembleOnce(hooks, sessionId = 'session-chat-regression') {
-  const out = await hooks['system-prompt/assemble'](
+function assemblyText(out) {
+  return [
+    ...(out.sections ?? []),
+    ...(out.contexts ?? []),
+  ].map((item) => String(item.text)).join('\n');
+}
+
+async function assembleRaw(hooks, sessionId = 'session-chat-regression') {
+  return hooks['system-prompt/assemble'](
     { sections: [] },
     { session: { id: sessionId }, agent: { id: sessionId } },
     async () => ({ sections: [] }),
   );
-  return (out.sections ?? []).map((section) => String(section.text)).join('\n');
+}
+
+async function assembleOnce(hooks, sessionId = 'session-chat-regression') {
+  return assemblyText(await assembleRaw(hooks, sessionId));
 }
 
 function emitTurnEnd(hooks, sessionId = 'session-chat-regression', data = {}) {
@@ -86,11 +96,18 @@ function emitTurnEnd(hooks, sessionId = 'session-chat-regression', data = {}) {
   writeFileSync(join(dir, 'chat.sign.json'), JSON.stringify({ v: 2, legacyLine: -1 }), 'utf8');
   const env = fakeContext();
   apply(env.ctx, { dir, injectLimit: 10, wakeMinutes: 60, masterPollSeconds: 0 });
-  const unrelated = await assembleOnce(env.hooks, 'session-xyz');
+  const unrelatedAssembly = await assembleRaw(env.hooks, 'session-xyz');
+  const unrelated = assemblyText(unrelatedAssembly);
   ok('非 chat 会话拿不到 ops 注入', !unrelated.includes('只给专用聊天会话的私聊'), unrelated);
   ok('非 chat 会话 assemble 不创建已读快照', !existsSync(join(dir, 'chat.read-state.koi.json')));
   emitTurnEnd(env.hooks, 'session-xyz');
-  const chat = await assembleOnce(env.hooks, 'session-chat-abc');
+  const chatAssembly = await assembleRaw(env.hooks, 'session-chat-abc');
+  const chat = assemblyText(chatAssembly);
+  const chatContext = (chatAssembly.contexts ?? []).find((item) => item.name === 'koi:chat');
+  ok('chat 未读段走 contexts', chatContext?.text.includes('只给专用聊天会话的私聊'), chat);
+  ok('chat 未读段不再进 sections',
+    !(chatAssembly.sections ?? []).some((item) => item.name === 'koi:chat'), chat);
+  ok('chat context 不携带 order', chatContext !== undefined && !Object.hasOwn(chatContext, 'order'));
   ok('session-chat-abc 仍拿到同一条 ops 注入', chat.includes('只给专用聊天会话的私聊'), chat);
   env.cleanup();
 }
@@ -216,8 +233,12 @@ function emitTurnEnd(hooks, sessionId = 'session-chat-regression', data = {}) {
   mkdirSync(join(dir, 'chat.jsonl'));
   const env = fakeContext();
   apply(env.ctx, { dir, injectLimit: 10, wakeMinutes: 60, masterPollSeconds: 0 });
-  const text = await assembleOnce(env.hooks);
+  const unreadableAssembly = await assembleRaw(env.hooks);
+  const text = assemblyText(unreadableAssembly);
   ok('注入侧区分“暂不可读”和“没有对话”', text.includes('会话记录暂不可读'), text);
+  ok('不可读告警走 contexts 而非 sections',
+    (unreadableAssembly.contexts ?? []).some((item) => item.name === 'koi:chat')
+      && !(unreadableAssembly.sections ?? []).some((item) => item.name === 'koi:chat'), text);
   ok('读失败不写已处理游标', !existsSync(join(dir, 'chat.read-state.koi.json')));
   const sent = await env.tools.talk_to_sister.execute({ text: '这条不该猜收件人' });
   ok('读失败时发送工具也不假装发出', sent.includes('会话记录暂不可读') && sent.includes('没发出去'), sent);

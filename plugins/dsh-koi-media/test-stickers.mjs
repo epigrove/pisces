@@ -174,7 +174,11 @@ console.log('=== 识图大小上限 ===');
     { agent: { id: 'vision-session' } },
     async () => ({ sections: [] }),
   );
-  const text = (assembled.sections ?? []).map((s) => s.text).join('\n');
+  const text = [...(assembled.sections ?? []), ...(assembled.contexts ?? [])].map((s) => s.text).join('\n');
+  const visionContext = (assembled.contexts ?? []).find((s) => s.name === 'koi:vision-feed');
+  eq('识图转述走 contexts', visionContext?.text.includes('超过识图大小上限 3 字节'), true);
+  eq('识图转述不再进 sections', !(assembled.sections ?? []).some((s) => s.name === 'koi:vision-feed'), true);
+  eq('识图转述保留 interpolate:false', visionContext?.interpolate, false);
   eq('超过 maxBytes 返回明确错误', text.includes('超过识图大小上限 3 字节'), true);
   eq('超限文件没有被送进 attachments', saveCalls, 0);
   eq('新配置上限 8MB 可用', readFileSync(new URL('./lib/index.js', import.meta.url), 'utf8').includes('8 * 1024 * 1024'), true);
@@ -196,7 +200,7 @@ console.log('=== 识图大小上限 ===');
     { agent: { id: 'vision-session' } },
     async () => ({ sections: [] }),
   );
-  const escapedText = (escaped.sections ?? []).map((s) => s.text).join('\n');
+  const escapedText = [...(escaped.sections ?? []), ...(escaped.contexts ?? [])].map((s) => s.text).join('\n');
   eq('自动识图拒绝 mediaRoot 内指向 /etc/passwd 的软链', escapedText.includes('不在允许的目录里'), true);
   eq('软链逃逸文件没有被送进 attachments', saveCalls, 0);
 }

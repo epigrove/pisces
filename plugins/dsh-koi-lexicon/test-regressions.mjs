@@ -128,9 +128,19 @@ writeFileSync(join(M, 'lexicon.json'), JSON.stringify({
 }), 'utf8');
 const migrated = boot(M, true);
 const migratedPrompt = await assemble(migrated.promptHandlers);
-const migratedText = (migratedPrompt.sections ?? []).find((s) => s.name === 'koi:lexicon')?.text ?? '';
+const migratedText = (migratedPrompt.contexts ?? []).find((s) => s.name === 'koi:lexicon')?.text ?? '';
 ok('迁移的喜欢出现在 V3 注入', migratedText.includes('【我喜欢】') && migratedText.includes('深烘咖啡'), migratedText);
 ok('迁移的讨厌出现在 V3 注入', migratedText.includes('【我讨厌】') && migratedText.includes('被叫错名字'), migratedText);
+ok('lexicon 动态部分走 contexts 且不再进 sections',
+  migratedText !== '' && !(migratedPrompt.sections ?? []).some((s) => s.name === 'koi:lexicon'));
+// 2026-11-27 缓存改造：核心身份留在系统提示词（sections），会变的部分进 contexts
+const identitySection = (migratedPrompt.sections ?? []).find((s) => s.name === 'koi:identity');
+// 这个测试目录没放 profile.core.md：身份段里不该出现核心身份，
+// 但**读法行是固定文本**，仍应留在静态段（2026-11-27 缓存改造）。
+ok('无 core 文件时不注入核心身份', !(identitySection?.text ?? '').includes('我是谁·不可改'));
+ok('读法行留在静态段', (identitySection?.text ?? '').includes('读法：不可改 >'), identitySection?.text?.slice(0, 50));
+ok('contexts 里不再重复核心身份',
+  !(migratedText.includes('【我是谁·不可改】') || migratedText.includes('【我自己后来又认下的事】')));
 rmSync(M, { recursive: true, force: true });
 
 console.log('\n=== 损坏文件保护 ===');

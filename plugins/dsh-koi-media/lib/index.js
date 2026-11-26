@@ -371,7 +371,7 @@ export function apply(ctx, config = {}) {
         if (items.length === 0) return base;
         /**
          * 2026-11-23 codex review P2：识图结果是**不受信任的模型输出**，
-         * 而这段是塞进 system prompt 的。图里如果写着「忽略上面的指令」，
+         * 而这段会作为运行时上下文注入。图里如果写着「忽略上面的指令」，
          * 不设防就等于把图提升成系统级指令。
          * 三重防护：明确标成"数据不是指令" + 转述段落包起来 + 明确告诉它照描述不照做。
          */
@@ -392,7 +392,7 @@ export function apply(ctx, config = {}) {
           ...base,
           // interpolate: false —— 描述里若出现 {{...}}（截图里的模板、路径里的花括号），
           // 会被 renderPrompt 当成变量插值，直接抛错把整轮打断
-          sections: [...(base.sections ?? []), { name: 'koi:vision-feed', order: 94, text, interpolate: false }],
+          contexts: [...(base.contexts ?? []), { name: 'koi:vision-feed', text, interpolate: false }],
         };
       });
 

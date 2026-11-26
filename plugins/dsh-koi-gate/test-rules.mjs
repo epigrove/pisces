@@ -5,7 +5,7 @@
  * 这个包是纯函数，所以测试**不碰文件系统、不读环境变量**：
  * 白名单用注入的假函数，状态是模块内 Map，每个用例自己清理。
  */
-import { isPureAside, SILENCE_TOKEN, isSilenceToken, shouldDropLeak, setWhitelistLoader, guardExit, markImage, markNamed, clearTurnFlags } from './lib/index.js';
+import { apply, isPureAside, SILENCE_TOKEN, isSilenceToken, shouldDropLeak, setWhitelistLoader, guardExit, markImage, markNamed, clearTurnFlags } from './lib/index.js';
 
 let pass = 0, fail = 0;
 function ok(name, cond, detail = '') {
@@ -69,6 +69,28 @@ clearTurnFlags('g3');
 // 锚定：不能见「睡」就吞
 ok('「没睡，在呢」→ 放行（不是退场）', guardExit('没睡，在呢', 'g4') === false);
 ok('「睡不着」→ 放行（不是退场）', guardExit('睡不着', 'g4') === false);
+
+// ── 出口规则保持静态 sections ─────────────────────────────
+{
+  let assemble;
+  const originalLog = console.log;
+  console.log = () => {};
+  try {
+    apply({
+      on(name, fn) { if (name === 'system-prompt/assemble') assemble = fn; },
+    });
+    const out = await assemble(
+      null,
+      null,
+      async () => ({ sections: [], contexts: [{ name: 'existing', text: 'keep' }] }),
+    );
+    const outbound = (out.sections ?? []).find((item) => item.name === 'koi:outbound');
+    ok('出口规则仍在 sections', outbound?.text.includes('## 出口规则（发送前自查）') === true);
+    ok('出口规则没有误搬进 contexts', !(out.contexts ?? []).some((item) => item.name === 'koi:outbound'));
+  } finally {
+    console.log = originalLog;
+  }
+}
 
 console.log(`\n${pass} 通过 / ${fail} 失败`);
 process.exit(fail === 0 ? 0 : 1);

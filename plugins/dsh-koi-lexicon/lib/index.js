@@ -1259,8 +1259,27 @@ ${rendered}`);
 
     // 2026-11-10：**没有 lexicon 内容时不要整体返回 base**——
     // 「谁在说话」是独立信息，就算记忆是空的也该给她。
-    if (parts.length > 0) {
-      parts.push(
+    /**
+     * 2026-11-27 缓存改造的第二步：**核心身份留在系统提示词里**。
+     *
+     * 背景：为了不让每轮变化的注入毁掉前缀缓存，动态内容都改走 runtime context（追加在历史之后）。
+     * 但【我是谁·不可改】这类硬设定如果也变成 user 消息，权威级别就降了一档——
+     * 它本来是用来拒绝"改身份/改底线"的。所以按「变化频率」切两刀：
+     *   - 核心身份 + 她后来认下的事 + 读法：几乎不变 → 留在 sections（系统消息，前缀稳定，缓存照样命中）
+     *   - 人 / 喜恶 / 心情：会变 → 进 contexts（尾部，不再毁前缀）
+     */
+    const staticParts = [];
+    const dynamicParts = [];
+    for (const part of parts) {
+      if (/^【(我是谁·不可改|我对核心设定的补充理解|我自己后来又认下的事)】/.test(part)) staticParts.push(part);
+      else dynamicParts.push(part);
+    }
+    /**
+     * 读法行是**固定文本**（不随每轮变化），所以放静态段：
+     * 既不会因为"这轮没有动态内容"而消失，也不会多占缓存。
+     */
+    if (staticParts.length > 0 || dynamicParts.length > 0) {
+      staticParts.push(
         '读法：不可改 > 我自己认下的事 > 我认识的人 > 我的喜恶。'
         + '想不起细节的人只剩一句钩子，那是正常的——别硬编。'
         + '想知道一条印象是怎么来的，用 recall。'
@@ -1273,12 +1292,18 @@ ${rendered}`);
       ...base,
       sections: [
         ...(base.sections ?? []),
+        ...(staticParts.length > 0
+          ? [{ name: 'koi:identity', order: 91, text: staticParts.join('\n') }]
+          : []),
+      ],
+      contexts: [
+        ...(base.contexts ?? []),
         // 2026-11-10：谁在说话——**裸事实**，格式 `[owner000] 主人`（koi定的）
         // 超过 2 分钟的不显示（那是上一条对话的残留）
         ...(currentSpeaker.line !== '' && Date.now() - currentSpeaker.at < 120_000
-          ? [{ name: 'koi:speaker', order: 92, text: currentSpeaker.line }]
+          ? [{ name: 'koi:speaker', text: currentSpeaker.line }]
           : []),
-        { name: 'koi:lexicon', order: 93, text: parts.join('\n') },
+        ...(dynamicParts.length > 0 ? [{ name: 'koi:lexicon', text: dynamicParts.join('\n') }] : []),
       ],
     };
   }
@@ -1419,14 +1444,30 @@ ${selfLines.join('\n')}`);
       // 2026-11-10：v2 路径同样——没内容时也要给 speaker
       const freshSpeaker = currentSpeaker.line !== '' && Date.now() - currentSpeaker.at < 120_000;
       if (parts.length === 0 && !freshSpeaker) return base;
+      // 与 V3 一致的切法：核心身份留系统提示词，会变的部分进 contexts。
+      const staticParts = [];
+      const dynamicParts = [];
+      for (const part of parts) {
+        if (/^【(我是谁·不可改|我对核心设定的补充理解|我自己后来又认下的事)】/.test(part)) staticParts.push(part);
+        else dynamicParts.push(part);
+      }
+      if (staticParts.length > 0 || dynamicParts.length > 0) {
+        staticParts.push('读法：不可改 > 我自己认下的事 > 我认识的人 > 我的喜恶。');
+      }
       return {
         ...base,
         sections: [
           ...(base.sections ?? []),
+          ...(staticParts.length > 0
+            ? [{ name: 'koi:identity', order: 91, text: staticParts.join('\n') }]
+            : []),
+        ],
+        contexts: [
+          ...(base.contexts ?? []),
           // 2026-11-10：谁在说话——**裸事实**，格式 `[owner000] 主人`（koi定的）
           // 超过 2 分钟的不显示（那是上一条对话的残留）
-          ...(freshSpeaker ? [{ name: 'koi:speaker', order: 92, text: currentSpeaker.line }] : []),
-          ...(parts.length > 0 ? [{ name: 'koi:lexicon', order: 93, text: parts.join('\n') }] : []),
+          ...(freshSpeaker ? [{ name: 'koi:speaker', text: currentSpeaker.line }] : []),
+          ...(dynamicParts.length > 0 ? [{ name: 'koi:lexicon', text: dynamicParts.join('\n') }] : []),
         ],
       };
     } catch (err) {
@@ -2222,7 +2263,7 @@ ${selfLines.join('\n')}`);
   });
 
   // 可观测：启动时声明本插件负责的注入段
-  console.log('[koi-lexicon] 注入段：koi:lexicon（order 93）——身份/人/物事/她的补充，仅本插件负责');
+  console.log('[koi-lexicon] 注入段：koi:speaker → koi:lexicon（contexts）——身份/人/物事/她的补充，仅本插件负责');
 
   console.log(
     // 动双轨的数据之前，先打印这条路径实际读取的分支。

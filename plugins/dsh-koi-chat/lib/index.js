@@ -418,7 +418,7 @@ export function apply(ctx, config) {
    */
   const pendingTurns = new Map();
 
-  function renderChatSection(base, shown) {
+  function renderChatContext(base, shown) {
     const sourceLabels = [...new Set(shown.map(({ src }) => src.label))];
     const speakers = sourceLabels.join('、');
     const lines = shown.map(({ m, src }) => {
@@ -427,11 +427,10 @@ export function apply(ctx, config) {
     });
     return {
       ...base,
-      sections: [
-        ...(base.sections ?? []),
+      contexts: [
+        ...(base.contexts ?? []),
         {
           name: SECTION,
-          order: 94,
           text: `【${speakers}找你说话】这是私下的对话通道，不是你平时待的地方。是${speakers}在跟你说话，可以直接回（用 talk_to_sister）。\n${lines.join('\n')}`,
         },
       ],
@@ -481,11 +480,10 @@ export function apply(ctx, config) {
         if (!report.readable) {
           return {
             ...base,
-            sections: [
-              ...(base.sections ?? []),
+            contexts: [
+              ...(base.contexts ?? []),
               {
                 name: SECTION,
-                order: 94,
                 text: '【会话记录暂不可读】读取对话通道失败，这一轮没有判断“有没有新消息”。不是没有对话，也不是文件被清空；游标保持原样，恢复可读后会重新检查。',
               },
             ],
@@ -509,7 +507,7 @@ export function apply(ctx, config) {
         pending = { shown };
         pendingTurns.set(sid, pending);
       }
-      return renderChatSection(base, pending.shown);
+      return renderChatContext(base, pending.shown);
     } catch (err) {
       console.log(`[koi-chat] ${sid} 注入准备失败，本轮不推进游标：${err instanceof Error ? err.message : String(err)}`);
       return base;

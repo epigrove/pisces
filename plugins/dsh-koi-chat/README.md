@@ -7,7 +7,7 @@ Provides the agent's HMAC-aware, append-only conversation channel with the opera
 ## What it does
 
 - Uses one `chat.jsonl` for `koi`, `ashu`, and `master` messages without rewriting history; it verifies inbound HMAC signatures and marks unsigned or bad-signature entries.
-- Injects unread messages into dedicated `session-chat-*` sessions at order `94`, bounded by a configurable batch limit.
+- Injects unread messages into dedicated `session-chat-*` sessions as a runtime context snapshot, bounded by a configurable batch limit.
 - Advances per-source cursors and seen ids only after a successful `turn/end`, using one atomic read-state snapshot.
 - Wakes the agent through `agent.followup()` when new messages arrive, using a file watcher plus per-source polling fallbacks.
 - Exposes `talk_to_sister`, including `request`-only outstanding-message limits and an explicit 4,000-character rejection limit.
@@ -53,7 +53,7 @@ Provides the agent's HMAC-aware, append-only conversation channel with the opera
 | `tools` | injected service | Required for `talk_to_sister`. |
 | `system-prompt/assemble` | event subscription | Injects unread messages into dedicated chat sessions. |
 | `session/event` turn end | event subscription | Commits read state only on successful completion. |
-| `koi:chat`, order `94` | prompt section | Source label, unread messages, trust marks, and reply hint. |
+| `koi:chat` | runtime context snapshot | Source label, unread messages, trust marks, and reply hint. |
 | `talk_to_sister` | tool | Appends a `chat` or `request` message to the channel. |
 | file watcher, operator poll, owner poll | timers | Trigger serialized `agent.followup()` wake-ups. |
 | daily proposal timer | effect timer | Generates and sends one proposal at the configured local time. |

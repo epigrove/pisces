@@ -61,7 +61,7 @@ const CONTRACTS = [
    * 结果匹配到的是人设里那句"把口径写进记忆"——假通过，比不查更糟。
    * 所以这里只查"段注册了没有"，注入是否真的发生交给体检第 9 项（注入自检）。
    */
-  { id: 'memory-section-registered', kind: 'log', expect: '注入段：qqbot:memory', why: '记忆段注册了（是否真注入由体检第 9 项管）' },
+  { id: 'memory-section-registered', kind: 'log', expect: '注入段：koi:memory', why: '记忆段注册了（是否真注入由体检第 9 项管）' },
 
   // 工具：应该在的 / 应该没了的
   { id: 'tool:note_save', kind: 'tool', expect: 'note_save', present: true, why: '笔记本' },

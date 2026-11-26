@@ -58,7 +58,7 @@ const runOnce = async () => {
     async () => ({ sections: [] }),
   );
   sessionEvent({ id: sessionId }, { type: 'turn/end', data: {} });
-  return (out.sections ?? []).map((s) => String(s.text)).join('\n');
+  return [...(out.sections ?? []), ...(out.contexts ?? [])].map((s) => String(s.text)).join('\n');
 };
 
 const first = await runOnce();

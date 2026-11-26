@@ -8,7 +8,7 @@
 
 - `koi`、`ashu`、`master` 共用同一个 `chat.jsonl`，各方只追加自己的消息，不回头改写历史。
 - 按 HMAC-SHA256 校验入站行；未签名或签名不符时明确标记，而不是静默当成可信消息。
-- 只在专用 `session-chat-*` 会话中以 order `94` 注入未读消息，并受可配置批次上限控制。
+- 只在专用 `session-chat-*` 会话中以运行时上下文快照注入未读消息，并受可配置批次上限控制。
 - 成功 `turn/end` 后才提交各来源游标和 seen id，二者共用一个原子已读快照。
 - 新消息到达时用文件监听加分来源轮询，通过 `agent.followup()` 唤醒 agent。
 - 暴露 `talk_to_sister`，对 `request` 消息限制未回条数，并明确拒收超过 4,000 字的消息。
@@ -54,7 +54,7 @@
 | `tools` | 注入服务 | `talk_to_sister` 注册所必需。 |
 | `system-prompt/assemble` | 事件订阅 | 向专用 chat 会话注入未读消息。 |
 | `session/event` 的 turn end | 事件订阅 | 只在成功结束时提交已读状态。 |
-| `koi:chat`，order `94` | 注入段 | 来源标签、未读消息、可信度标记和回复提示。 |
+| `koi:chat` | 运行时上下文快照 | 来源标签、未读消息、可信度标记和回复提示。 |
 | `talk_to_sister` | 工具 | 向共享通道追加 `chat` 或 `request` 消息。 |
 | 文件监听、运维方轮询、主人轮询 | 定时器 | 触发串行化的 `agent.followup()` 唤醒。 |
 | 每日提案定时器 | effect timer | 在配置的本地时间生成并发送一次提案。 |

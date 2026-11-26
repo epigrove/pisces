@@ -50,8 +50,9 @@ Plugin id: `koi-lexicon`. Injected service: `tools`.
 | `agent/inbox/claimed` | event subscription | Updates the current speaker before prompt assembly. |
 | `session/event` | event subscription | Records human speakers, turn counts, and same-day mentions. |
 | `system-prompt/assemble` | event subscription | Adds speaker and subjective-world sections. |
-| `koi:speaker`, order `92` | prompt section | Short-lived current-speaker evidence. |
-| `koi:lexicon`, order `93` | prompt section | Core, self additions, people, likes, dislikes, and mood records. |
+| `koi:identity` | prompt section | Core identity and self-accepted rules; kept in the system prompt. |
+| `koi:speaker` | runtime context snapshot | Short-lived current-speaker evidence. |
+| `koi:lexicon` | runtime context snapshot | People, likes, dislikes, mood, and the reading guide. |
 | `remember_person` | tool | Appends a person description. |
 | `remember_impression` | tool | Appends or resets a person/thing impression. |
 | `set_aside` | tool | Hides or restores a self-authored entry without deletion. |

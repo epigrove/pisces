@@ -10,7 +10,7 @@ Maintains the agent's changing internal state: energy, named mood dimensions, ti
 - Resets energy once per local day and supports `rest` actions for naps, sleep, or tidying up.
 - Appends named mood dimensions with signed strength, reason, and an optional curve.
 - Computes active dimensions separately, so “irritated” and “relieved” can coexist instead of cancelling into one score.
-- Injects current time, time-slot tone, energy, the previous speaker, and active mood dimensions at order `96`.
+- Injects current time, time-slot tone, energy, the previous speaker, and active mood dimensions as a runtime context snapshot.
 - Recalls old mood evidence and uses it only to color that recall response without writing a new persistent mood episode.
 
 ## Design rationale
@@ -38,7 +38,7 @@ Maintains the agent's changing internal state: energy, named mood dimensions, ti
 | `tools` | injected service | Required for affect tools. |
 | `session/event` | event subscription | Tracks the latest human speaker. |
 | `system-prompt/assemble` | event subscription | Settles energy and residue, then adds the mood section. |
-| `koi:mood`, order `96` | prompt section | Current time, state, energy, speaker, and active dimensions. |
+| `koi:mood` | runtime context snapshot | Current time, state, energy, speaker, and active dimensions. |
 | `feel_dimension` | tool | Appends one named mood observation. |
 | `rest` | tool | Applies nap, sleep, or tidy energy recovery. |
 | `request_mood_tuning` | tool | Queues a request to change the default mood half-life. |
@@ -59,4 +59,4 @@ The test prints `✅` or `❌` per case and finishes with `N 通过 / 0 失败`.
 - `request_mood_tuning` only appends to `pending-tuning.jsonl`; an operator must approve a change before it affects the active curve.
 - The retired single-value mood may remain in old files for compatibility, but it is no longer written or injected.
 - Legacy residue records are settled if present, but current `recall_mood` does not create a new persistent residue entry.
-- Mood injection expects the host prompt assembly object to contain a `sections` array.
+- Mood injection appends to `contexts`; an old host without that array falls back to an empty one.

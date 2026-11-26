@@ -13,12 +13,17 @@
  * 判据是数出来的，不是"感觉不对劲"。
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import { checkLedger, readRefreshAudit } from 'dsh-koi-decay/sidecar';
 
-const KOI = (process.env.KOI_HOME ?? homedir());
+/**
+ * 2026-11-27：路径按脚本位置推导。原来 `KOI_HOME ?? homedir()`，
+ * 从运维 shell 跑时 HOME 是运维方的家目录，会去 <家目录>/plugins 找插件（不存在）。
+ */
+const KOI = process.env.KOI_HOME ?? join(dirname(fileURLToPath(import.meta.url)), '..');
 const LEX = join(KOI, '.koi/lexicon.json');
 const AFFECT = join(KOI, '.koi/affect.json');
 const HB = join(KOI, '.koi/heartbeat.json');

@@ -68,15 +68,18 @@ const claim = (name, oid) => onClaimed?.({
   },
 });
 
-async function speakerLine() {
+async function speakerAssembly() {
   let next = async () => ({ sections: [] });
   for (let i = chain.length - 1; i >= 0; i -= 1) {
     const fn = chain[i];
     const inner = next;
     next = () => fn({}, { agent: { id: 's1' } }, inner);
   }
-  const out = await next();
-  return (out.sections ?? []).find((s) => s.name === 'koi:speaker')?.text ?? '';
+  return next();
+}
+
+function speakerContextText(out) {
+  return (out.contexts ?? []).find((s) => s.name === 'koi:speaker')?.text ?? '';
 }
 
 let p = 0, f = 0;
@@ -84,15 +87,19 @@ const ok = (n, c, extra = '') => { c ? p++ : f++; console.log(`${c ? '✅' : '�
 
 // 0) rc.5：claim 发生在 assemble 前，首轮必须已经看到这条消息的说话人
 claim('当前甲', 'DDDDDDDD11223344DDDDDDDD11223344');
-const firstClaimed = await speakerLine();
+const firstAssembly = await speakerAssembly();
+const firstClaimed = speakerContextText(firstAssembly);
+ok('speaker 走 contexts', firstClaimed.startsWith('[dddddddd] 当前甲'), firstClaimed);
+ok('speaker 不再进 sections',
+  !(firstAssembly.sections ?? []).some((s) => s.name === 'koi:speaker'));
 ok('claim(A) 后首个 assemble 使用 A', firstClaimed.startsWith('[dddddddd] 当前甲'), firstClaimed);
 claim('当前乙', 'EEEEEEEE11223344EEEEEEEE11223344');
-const secondClaimed = await speakerLine();
+const secondClaimed = speakerContextText(await speakerAssembly());
 ok('claim(B) 后 assemble 切换为 B', secondClaimed.startsWith('[eeeeeeee] 当前乙'), secondClaimed);
 
 // 1) 完全没记录的人
 say('路人甲', 'AABBCCDD11223344AABBCCDD11223344');
-const l1 = await speakerLine();
+const l1 = speakerContextText(await speakerAssembly());
 ok('陌生人 → 带「没印象，先 recall」', l1.includes('没印象') && l1.includes('recall'), l1);
 ok('只给 id + 名字，不加别的结论', /^\[aabbccdd\] 路人甲（没印象，先 recall 一次）$/.test(l1.trim()), l1);
 
@@ -105,7 +112,7 @@ if (withDesc) {
   const [key, v] = withDesc;
   const oid = String(v.oid ?? key).padEnd(32, '0').slice(0, 32);
   say(v.name, oid);
-  const l2 = await speakerLine();
+  const l2 = speakerContextText(await speakerAssembly());
   ok('有描述的人 → 不加任何提示', !l2.includes('没印象'), l2);
 }
 

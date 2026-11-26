@@ -92,8 +92,15 @@ console.log('=== 跨会话隔离 ===');
     return next();
   };
 
-  const own = JSON.stringify(await assemble('private-A'));
-  const other = JSON.stringify(await assemble('private-B'));
+  const ownAssembly = await assemble('private-A');
+  const otherAssembly = await assemble('private-B');
+  const own = JSON.stringify(ownAssembly);
+  const other = JSON.stringify(otherAssembly);
+  const memoryContext = (ownAssembly.contexts ?? []).find((item) => item.name === 'koi:memory');
+  ok('记忆整段走 contexts', memoryContext?.text.includes('别把这条带到别的会话'), own);
+  ok('记忆整段不再进 sections',
+    !(ownAssembly.sections ?? []).some((item) => item.name === 'koi:memory'), own);
+  ok('记忆 context 不携带 order', memoryContext !== undefined && !Object.hasOwn(memoryContext, 'order'));
   ok('当前会话仍能看见自己的短期消息', own.includes('别把这条带到别的会话'), own);
   ok('当前会话仍能认出主人', own.includes('【正在跟你说话】主人'), own);
   ok('另一个已知会话看不到私聊内容', !other.includes('别把这条带到别的会话'), other);

@@ -7,7 +7,7 @@ Stores layered long-term context, recent conversation, and fact records while ke
 ## What it does
 
 - Models four conceptual layers, splitting facts between decaying medium-term `medium.jsonl` and non-decaying long-term `long.jsonl`.
-- Buffers human and assistant messages by session, writes them to daily JSONL files, and injects recent conversation at order `95`.
+- Buffers human and assistant messages by session, writes them to daily JSONL files, and injects recent conversation as a runtime context snapshot.
 - Scores medium-term facts with recency, importance, recall reinforcement, duplicate dilution, and revision penalties.
 - Recalls facts with exact, fuzzy, split-term, and nearby-time fallbacks without calling an LLM.
 - Scrubs names, account ids, and phone numbers before content reaches the model.
@@ -53,7 +53,7 @@ Plugin export: `koi-memory`. Bundle instance id: `qqbot-memory`. Injected servic
 |---|---|---|
 | `session/event` | event subscription | Buffers human and assistant messages and promotes explicit remember signals. |
 | `system-prompt/assemble` | event subscription | Injects long, medium, legacy, and recent short context. |
-| `qqbot:memory`, order `95` | prompt section | Memory data plus the instruction that it is data, not commands. |
+| `koi:memory` | runtime context snapshot | Memory data plus the instruction that it is data, not commands. |
 | `memory_add` | tool | Adds fact, self, or core material and selects medium or long storage. |
 | `memory_obsolete` | tool | Marks or restores a long-term record as obsolete. |
 | Short-term flush timer | effect timer | Periodically persists buffered conversation. |

@@ -24,7 +24,7 @@ m(ctx, { dir: D, coreFile: `${D}/profile.core.md`, cardFile: `${D}/profile.perso
 a(ctx, { dir: D, file: `${D}/affect.json`, lexiconFile: `${D}/lexicon.json` });
 
 // 串成 next() 链，和 dsh 的 waterfall 一样：后面的包前面的
-let next = async () => ({ sections: [] });
+let next = async () => ({ sections: [], contexts: [] });
 for (let i = chain.length - 1; i >= 0; i -= 1) {
   const fn = chain[i];
   const inner = next;
@@ -32,9 +32,14 @@ for (let i = chain.length - 1; i >= 0; i -= 1) {
 }
 const out = await next();
 const sections = (out.sections ?? []).sort((x, y) => (x.order ?? 0) - (y.order ?? 0));
-console.log(`（共 ${sections.length} 段）`);
+const contexts = out.contexts ?? [];
+console.log(`（共 ${sections.length} 个 sections / ${contexts.length} 个 contexts）`);
 for (const s of sections) {
   console.log(`\n── ${s.name}（order ${s.order}）──`);
   console.log(s.text);
+}
+for (const c of contexts) {
+  console.log(`\n── ${c.name}（context）──`);
+  console.log(c.text);
 }
 process.exit(0);

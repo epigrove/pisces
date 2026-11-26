@@ -329,7 +329,7 @@ export function apply(ctx, config) {
 
     return {
       ...base,
-      sections: [...(base.sections ?? []), { name: 'koi:mood', order: 96, text: parts.join('\n') }],
+      contexts: [...(base.contexts ?? []), { name: 'koi:mood', text: parts.join('\n') }],
     };
   });
 
@@ -552,7 +552,7 @@ export function apply(ctx, config) {
     },
   });
 
-  console.log('[koi-affect] 注入段：koi:mood（order 96）——心情/精力/刚才是谁，仅本插件负责');
+  console.log('[koi-affect] 注入段：koi:mood（contexts）——心情/精力/刚才是谁，仅本插件负责');
 
   const lexPeople = readLexiconPeople();
   const nPeople = Object.keys(lexPeople).length;

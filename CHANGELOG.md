@@ -1,3 +1,13 @@
+## Unreleased
+
+### Changed
+
+- Dynamic prompt injections (time, mood, speaker, memory, unread messages, image transcription) now use
+  DSH runtime-context snapshots instead of system-prompt sections. The system prompt stays byte-identical
+  across turns, so the provider's prefix cache can be reused for the whole conversation history.
+- Core identity and self-accepted rules stay in the system prompt (new `koi:identity` section); only the
+  parts that change each turn moved to the runtime snapshot.
+
 # Changelog
 
 [中文](./CHANGELOG.zh-CN.md) | English

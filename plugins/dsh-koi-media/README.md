@@ -7,7 +7,7 @@ Handles inbound image transcription, persistent image inventory, and first-frame
 ## What it does
 
 - Watches incoming human messages for `Image: /path` entries and starts a vision call before prompt assembly.
-- Injects a clearly labeled, description-only transcription at order `94`.
+- Injects a clearly labeled, description-only transcription as a runtime context snapshot.
 - Validates image paths against `mediaRoot`, checks type and size, and records categorized vision failures.
 - Stores kept images by content hash with a searchable description, sender, timestamp, and persistent copy.
 - Recalls stored images by description or sender and returns usable paths.
@@ -51,7 +51,7 @@ Plugin id: `koi-media`. Injected service: `tools`.
 | `agent/inbox/claimed` | event subscription | Assigns the job to the turn that claims the message. |
 | `session/event` turn end | event subscription | Clears per-turn state and expires old jobs. |
 | `system-prompt/assemble` | event subscription | Waits for claimed jobs and injects their descriptions. |
-| `koi:vision-feed`, order `94` | prompt section | Machine transcription with injection-resistant framing. |
+| `koi:vision-feed` | runtime context snapshot | Machine transcription with injection-resistant framing. |
 | `keep_image` | tool | Copies an accepted media file into persistent inventory. |
 | `recall_image` | tool | Searches inventory by description or sender. |
 | `qqbot_describe_video` | tool | Extracts and returns a local video's first frame. |
