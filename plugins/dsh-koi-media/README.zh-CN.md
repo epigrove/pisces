@@ -73,5 +73,6 @@ node plugins/dsh-koi-media/test-stickers.mjs
 - `mediaRoot` 必须存在且能通过 `realpath` 解析；根目录本身不算可读取的图片路径。
 - 每张图一次视觉调用。120 字是提示词要求，不是硬输出截断。
 - 库存返回的是持久副本，但收图时源路径必须仍在 `mediaRoot` 内。
+- 库存文件在 `<dataDir>/media/`，**不在**通道插件自己的发送白名单里。`recall_image` 把路径交给发送工具时，那个工具必须也允许这个目录——用 `dsh-qqbot` 就把 `sendFile.extraRoots` 指到它。否则文件明明存在，发送仍会报「不在允许的目录内」。
 - 视频抽帧依赖可用的 `ffmpeg` 进程，并把临时 JPEG 写到系统临时目录。
 - 随包 patch 中有 `maxSide`，但当前媒体代码不读取、不应用它，也不做图片缩放。

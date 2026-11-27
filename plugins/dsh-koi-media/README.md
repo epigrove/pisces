@@ -73,5 +73,6 @@ The test prints `✅` or `❌` per case and ends with `N 通过 / 0 失败`; suc
 - `mediaRoot` must exist and resolve through `realpath`; the root itself is not treated as an image path.
 - Vision uses one API call per image. The 120-character instruction is a soft limit, not a hard output truncation.
 - Stored inventory paths are durable copies, but the source path must remain under `mediaRoot` at keep time.
+- Kept images live under `<dataDir>/media/`, which is **outside** a channel plugin's own send allowlist. If `recall_image` hands a path to a file-sending tool, that tool must allow this directory too — for `dsh-qqbot`, set `sendFile.extraRoots` to it. Otherwise the send fails with a path-not-allowed error even though the file exists.
 - Video extraction depends on a working `ffmpeg` and writes a temporary JPEG under the system temporary directory.
 - The bundled patch contains `maxSide`, but current code does not read or apply it and performs no resizing.
