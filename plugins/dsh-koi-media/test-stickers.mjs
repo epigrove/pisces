@@ -51,6 +51,31 @@ eq('按发送人捞', S.recall('运维方').total, 1);
 eq('空查询返回全部', S.recall('').total, 2);
 eq('捞不到返回 0', S.recall('不存在的东西').total, 0);
 
+console.log('=== 未登记的老图（2026-11-27 修「库存里一张也找不着」）===');
+// 模拟：换 mediaRoot 之前就躺在库存目录里、但没进索引的老图
+writeFileSync(join(D, 'media', 'legacy-1.gif'), Buffer.from([0x47,0x49,0x46,0x38,1]));
+writeFileSync(join(D, 'media', 'legacy-2.png'), Buffer.from([0x89,0x50,0x4e,0x47,2]));
+{
+  const miss = S.recall('风堇');
+  eq('搜不到时仍报 0 条登记命中', miss.total, 0);
+  eq('但会列出未登记的老图', miss.unregistered.length, 2);
+  eq('未登记总数对得上', miss.unregisteredTotal, 2);
+  eq('返回的是绝对路径', miss.unregistered.every((it) => it.path.startsWith(join(D, 'media'))), true);
+  const hitOne = S.recall('白猫');
+  eq('命中时也带未登记提示', hitOne.unregisteredTotal, 2);
+  eq('空查询不列未登记（避免刷屏）', S.recall('').unregisteredTotal, 0);
+}
+// 从库存目录里重新登记老图（原来只认 QQ 临时媒体根，会把她自己拦在外面）
+{
+  const legacyPath = join(D, 'media', 'legacy-1.gif');
+  const r = S.keep({ image: legacyPath, desc: '风堇竖中指（补登记）' });
+  eq('能从库存目录补登记', r.ok, true);
+  eq('补登记后按描述搜得到', S.recall('风堇').total, 1);
+  // 2026-11-27 review P2：补登记后原件要清掉，否则它会一直算「未登记」，能反复重复登记
+  eq('补登记后原件不再算未登记', S.recall('风堇').unregistered.some((it) => it.path === legacyPath), false);
+  eq('未登记只剩另一张', S.recall('风堇').unregisteredTotal, 1);
+}
+
 console.log('=== 边界 ===');
 eq('不存在的图被拒', S.keep({image:'/nope.jpg', desc:'x'}).ok, false);
 eq('无描述被拒', S.keep({image: D+'/src/a.jpg', desc:''}).ok, false);
@@ -69,7 +94,8 @@ eq('纯不存在路径若祖先仍在 root 内则允许', isInsideMediaRoot(D+'/
 
 console.log('=== 持久化 ===');
 const S2 = new StickerStore(storeCfg);
-eq('重载后 2 条', S2.items.length, 2);
+// 2026-11-27：前面补登记了一张老图，所以用 S.items.length 而不是写死 2
+ eq('重载条数与内存一致', S2.items.length, S.items.length);
 console.log('   stats:', JSON.stringify(S2.stats()));
 {
   const beforeIno = statSync(join(D, 'stickers.json')).ino;

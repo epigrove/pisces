@@ -14,6 +14,7 @@
  */
 import {
   copyFileSync,
+  readdirSync,
   closeSync,
   existsSync,
   fsyncSync,
@@ -107,14 +108,20 @@ export class StickerStore {
     if (src === '') return { ok: false, message: '要说是哪张图。' };
     if (description === '') return { ok: false, message: '图得有个描述，不然以后捞不回来。' };
     if (!existsSync(src)) return { ok: false, message: `原图不在了（${src}），收不了。` };
+    /**
+     * 2026-11-27：**也允许从库存目录自身收图**。
+     * 场景：老图躺在 <dataDir>/media/ 里但没登记（换 mediaRoot 之前收进来的），
+     * 她想「看一眼再登记」时源路径就在这个目录里；只认 QQ 临时媒体根的话会把她自己拦在外面。
+     */
     const checked = resolveInsideMediaRoot(src, this.mediaRoot);
-    if (!checked.ok) {
+    const checkedOwn = checked.ok ? checked : resolveInsideMediaRoot(src, this.mediaDir);
+    if (!checkedOwn.ok) {
       return {
         ok: false,
-        message: `原图不在允许的媒体目录（${this.mediaRoot}）里，或者路径无法校验（${checked.reason}），收不了。`,
+        message: `原图不在允许的媒体目录（${this.mediaRoot} 或库存目录）里，或者路径无法校验（${checked.reason}），收不了。`,
       };
     }
-    const realSrc = checked.path;
+    const realSrc = checkedOwn.path;
 
     const ext = extname(realSrc).toLowerCase();
     if (!IMG_EXT.has(ext)) return { ok: false, message: `这个扩展名（${ext}）不是图片。` };
@@ -173,6 +180,23 @@ export class StickerStore {
       path: dest,
       bytes: statSync(dest).size,
     };
+    /**
+     * 2026-11-27 review P2：从**库存目录**里补登记时，源文件就是一份没登记的旧副本。
+     * 复制到 <hash>.<ext> 之后原件还留着 → 它会一直被列为「未登记」，
+     * 她能反复重复登记同一张、字节也存两份。这里把那份冗余原件删掉。
+     * 只在「源在库存目录内且不是目标文件」时删，删的是刚复制过的同一份内容。
+     */
+    if (realSrc !== dest) {
+      const insideOwnLibrary = resolveInsideMediaRoot(realSrc, this.mediaDir).ok;
+      if (insideOwnLibrary) {
+        try {
+          unlinkSync(realSrc);
+        } catch (err) {
+          // 删不掉不影响登记结果，只是会多留一份未登记副本；报出来别静默
+          console.log(`[koi-stickers] 补登记后没能清掉原件（${realSrc}）：${err instanceof Error ? err.message : String(err)}`);
+        }
+      }
+    }
     this.items.push(item);
     if (!this.save()) {
       this.items.pop();
@@ -198,7 +222,44 @@ export class StickerStore {
     const all = this.items.filter(hit);
     // 最近的排前面
     all.sort((a, b) => Number(b.lastAt ?? b.at ?? 0) - Number(a.lastAt ?? a.at ?? 0));
-    return { hits: all.slice(0, limit), total: all.length };
+    return {
+      hits: all.slice(0, limit),
+      total: all.length,
+      /**
+       * 2026-11-27：**索引之外的文件也要有个交代**。
+       * 她报「库存里一张也找不着」——实际是搜的那张从来没登记过，
+       * 但目录里确实躺着几十张没描述的老图。只回「没有」等于骗她。
+       * 这里把没登记的文件按时间列出来：搜不了内容，但能按日期捞、打开看、
+       * 认出来之后再用 keep_image 正式登记。
+       */
+      unregistered: q === '' ? [] : this.unregisteredFiles(limit),
+      unregisteredTotal: q === '' ? 0 : this.unregisteredFiles(Infinity).length,
+    };
+  }
+
+  /** 目录里存在、但索引里没有的文件（按修改时间倒序） */
+  unregisteredFiles(limit = 5) {
+    const known = new Set(this.items.map((it) => it.path).filter(Boolean));
+    let names = [];
+    try {
+      names = readdirSync(this.mediaDir);
+    } catch {
+      return [];
+    }
+    const out = [];
+    for (const name of names) {
+      if (name.startsWith('.')) continue;
+      const full = join(this.mediaDir, name);
+      if (known.has(full)) continue;
+      if (!IMG_EXT.has(extname(full).toLowerCase())) continue;
+      try {
+        const st = statSync(full);
+        if (!st.isFile()) continue;
+        out.push({ path: full, at: Number(st.mtimeMs) || 0, bytes: st.size });
+      } catch { /* 单个文件 stat 失败（被删/没权限）就跳过，不影响其它文件 */ continue; }
+    }
+    out.sort((a, b) => b.at - a.at);
+    return Number.isFinite(limit) ? out.slice(0, limit) : out;
   }
 
   stats() {

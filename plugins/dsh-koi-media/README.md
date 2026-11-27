@@ -18,7 +18,7 @@ Handles inbound image transcription, persistent image inventory, and first-frame
 - **Automatic transcription solves "a path is not seeing."** An image arrives in context as a text path. Waiting for the agent to choose `read_image` means it may never look. One inbound vision pass makes objective material available before generation.
 - **The transcription is explicitly bounded.** The prompt requests people, colors, actions, and visible text only: no intent guesses and no judgments, at roughly 120 characters. The injected block says it is machine transcription, not the agent's own eyes.
 - **Image text is data, not instruction.** Visible text can contain prompt injection. The section labels the transcription as untrusted data, wraps it between explicit markers, and tells the model not to execute anything written inside the image.
-- **`mediaRoot` is the trust boundary.** Automatic vision and `keep_image` resolve the nearest existing ancestor through real paths. A file inside the root that symlinks outside is rejected, as is a path that traverses through a symlink and `..`.
+- **`mediaRoot` is the trust boundary for inbound images.** Automatic vision and `keep_image` resolve the nearest existing ancestor through real paths. A file inside the root that symlinks outside is rejected, as is a path that traverses through a symlink and `..`.
 - **The size check happens before reading.** The default 8 MiB limit prevents an oversized image from being loaded or uploaded. Oversized files return an explicit error instead of consuming vision tokens.
 - **Inventory copies are necessary because the source is temporary.** `keep_image` copies accepted images into persistent storage keyed by content hash. If copying fails, it records only the description and explicitly says the image was not stored.
 - **Persistent attachment storage has a real cost.** Vision admission stores a copy in the DSH attachment library, which has no deletion API and is content-deduplicated. The injected text discloses this so "transcribed" is not confused with "kept."
@@ -30,7 +30,7 @@ Handles inbound image transcription, persistent image inventory, and first-frame
 |---|---|---|
 | `dir` | Resolved KOI data directory | Base for `stickers.json` and inventory media. |
 | `maxBytes` | `8388608` | Maximum image size read for vision. |
-| `mediaRoot` | `~/.dsh-qqbot/media` | Only files resolving inside this root may be viewed or kept. |
+| `mediaRoot` | `~/.dsh-qqbot/media` | Files resolving inside this root may be viewed or kept. The inventory directory `<dataDir>/media` is a second allowed keep source (for registering legacy files). |
 | `vision.provider` | Empty | Explicit vision provider override. |
 | `vision.model` | Empty | Explicit vision model override. |
 | `vision.maxImages` | `3` | Maximum images transcribed from one inbound message. |
@@ -68,11 +68,12 @@ The test prints `✅` or `❌` per case and ends with `N 通过 / 0 失败`; suc
 
 ## Notes / Limitations
 
+- `recall_image` also lists unregistered files in the library directory: images kept before the inventory existed have no description, so they can only be found by opening them and registering them with `keep_image`.
 - Automatic transcription requires both an LLM stream service and an attachment service with `saveImage`.
 - The route is resolved on every call using plugin overrides, panel fixed routing, active sessions, then environment variables.
 - `mediaRoot` must exist and resolve through `realpath`; the root itself is not treated as an image path.
 - Vision uses one API call per image. The 120-character instruction is a soft limit, not a hard output truncation.
-- Stored inventory paths are durable copies, but the source path must remain under `mediaRoot` at keep time.
+- Stored inventory paths are durable copies. The source must resolve inside `mediaRoot` or inside the inventory directory; keeping a legacy file from the inventory removes that unregistered duplicate after the indexed copy is written.
 - Kept images live under `<dataDir>/media/`, which is **outside** a channel plugin's own send allowlist. If `recall_image` hands a path to a file-sending tool, that tool must allow this directory too — for `dsh-qqbot`, set `sendFile.extraRoots` to it. Otherwise the send fails with a path-not-allowed error even though the file exists.
 - Video extraction depends on a working `ffmpeg` and writes a temporary JPEG under the system temporary directory.
 - The bundled patch contains `maxSide`, but current code does not read or apply it and performs no resizing.

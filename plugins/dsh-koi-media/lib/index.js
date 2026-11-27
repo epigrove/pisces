@@ -1,8 +1,9 @@
 /**
  * dsh-koi-media — 图片库存、视频首帧、带图消息自动识图。
  *
- * 本插件不再压缩图片。识图前先检查文件大小；keep_image 只接收
- * realpath 后仍位于配置 mediaRoot 内的源文件。
+ * 本插件不再压缩图片。识图前先检查文件大小；keep_image 接收两类源文件：
+ * realpath 后仍位于配置 mediaRoot（通道的临时媒体目录）内的，或者已在
+ * 库存目录 `<dataDir>/media/` 内、还没登记的旧图（补登记时用）。
  */
 import { StickerStore } from './stickers.js';
 import { resolveInsideMediaRoot } from './media-root.js';
@@ -448,7 +449,8 @@ export function apply(ctx, config = {}) {
       description:
         '从库存里找图。按描述或发送人搜，返回图片路径——'
         + '拿到路径后用 qqbot_send_file 把它发出去。'
-        + '搜不到就说「没存」，别编。',
+        + '搜不到时若返回「没登记的老图」，那是没描述的旧图：能打开看、认出来可以 keep_image 补登记。'
+        + '连老图都没有就说「没存」，别编。',
       parameters: {
         type: 'object',
         additionalProperties: false,
@@ -459,9 +461,23 @@ export function apply(ctx, config = {}) {
       },
       output: { schema: { type: 'string' }, render: (_a, v) => [{ type: 'text', text: String(v) }] },
       async execute(args) {
-        const { hits, total } = store.recall(String(args?.query ?? ''));
+        const { hits, total, unregistered, unregisteredTotal } = store.recall(String(args?.query ?? ''));
+        /**
+         * 2026-11-27：搜不到时**别只说没有**——库里可能有一堆没登记的老图。
+         * 说清「这些没描述、得自己打开看」，再给路径；她能看图，认出来就 keep_image 登记。
+         */
+        const legacyLines = (unregistered ?? []).map((it) => {
+          const d = new Date(Number(it.at ?? 0));
+          const day = `${d.getMonth() + 1}/${d.getDate()}`;
+          return `- ${day} 收的（没描述）\n  路径：${it.path}`;
+        });
+        const legacyTail = legacyLines.length > 0
+          ? `\n\n库里还有 ${unregisteredTotal} 张**没登记**的老图，没有描述所以搜不到。`
+            + '要认就打开看，认出来再用 keep_image 登记：\n'
+            + legacyLines.join('\n')
+          : '';
         if (hits.length === 0) {
-          return `库存里没有「${args?.query}」。说没存就行，别编。`;
+          return `库存里没有描述带「${args?.query}」的图。说没存就行，别编。${legacyTail}`;
         }
         const lines = hits.map((it) => {
           const d = new Date(Number(it.at ?? 0));
@@ -470,7 +486,7 @@ export function apply(ctx, config = {}) {
           return `- ${day} ${it.desc}${it.from ? `（${it.from} 发的）` : ''}\n  路径：${it.path}`;
         });
         const tail = total > hits.length ? `\n（一共 ${total} 张，只列了最近 ${hits.length} 张）` : '';
-        return `找到 ${total} 张：\n${lines.join('\n')}${tail}`;
+        return `找到 ${total} 张：\n${lines.join('\n')}${tail}${legacyTail}`;
       },
     });
 
