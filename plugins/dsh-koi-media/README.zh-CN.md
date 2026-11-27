@@ -68,6 +68,7 @@ node plugins/dsh-koi-media/test-stickers.mjs
 
 ## 说明 / 限制
 
+- 发库存里的图要用**通道作用域**的目标：`group:<group_openid>` 或 `c2c:<c2c_openid>`。人在群里那串 openid（转述里常见的那个）**不是**发送目标，传进去平台会回一个误导性的「富媒体文件下载失败」。在通道会话里工具会自己推断目标，不用传。
 - `recall_image` 搜不到时会列出库存目录里「没登记的老图」：这些图没有描述，只能打开看、再用 `keep_image` 补登记。
 - 自动转述同时需要 LLM stream 服务和带 `saveImage` 的 attachment 服务。
 - 每次调用都会重新解析路由，顺序为插件覆盖、面板固定配置、活会话、环境变量。

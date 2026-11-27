@@ -50,6 +50,17 @@ eq('按描述捞', S.recall('白猫').total, 1);
 eq('按发送人捞', S.recall('运维方').total, 1);
 eq('空查询返回全部', S.recall('').total, 2);
 eq('捞不到返回 0', S.recall('不存在的东西').total, 0);
+// 2026-11-27：多词查询按词拆，「女仆 哭泣」这种说法要能匹配上
+{
+  // b.jpg 前面已经收过（内容相同会被判重、不会改 desc），这里造一张新的
+  writeFileSync(D+'/src/c.jpg', Buffer.from([0xff,0xd8,0xff,0xe0,7,7,7]));
+  const r = S.keep({ image: D+'/src/c.jpg', desc: '蓝发女仆拎着同款小号哭泣版，抬手指着', from: '人物乙' });
+  eq('多词查询能匹配', S.recall('女仆 哭泣').total, 1);
+  eq('多词乱序也能匹配', S.recall('哭泣 女仆').total, 1);
+  eq('全角顿号也能拆', S.recall('女仆、哭泣').total, 1);
+  eq('缺一个词就不算命中', S.recall('女仆 不存在的词').total, 0);
+  eq('重复收时把路径带出来', r.ok && S.keep({ image: D+'/src/c.jpg', desc: '再收一次' }).message.includes('/media/'), true);
+}
 
 console.log('=== 未登记的老图（2026-11-27 修「库存里一张也找不着」）===');
 // 模拟：换 mediaRoot 之前就躺在库存目录里、但没进索引的老图

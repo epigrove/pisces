@@ -146,7 +146,11 @@ export class StickerStore {
         dup.lastAt = prevLastAt;
         return { ok: false, message: '这张图识别成重复了，但库存索引没写进去；这次不算收好。' };
       }
-      return { ok: true, message: `这张早就收过了（${dup.desc}），又记了一次。`, item: dup };
+      return {
+        ok: true,
+        message: `这张早就收过了（${dup.desc}），又记了一次。要发就用这个路径：${dup.path ?? '（这次只记了描述，没有文件）'}`,
+        item: dup,
+      };
     }
 
     // 复制到持久目录
@@ -214,10 +218,17 @@ export class StickerStore {
    */
   recall(query, limit = 5) {
     const q = String(query ?? '').trim().toLowerCase();
+    /**
+     * 2026-11-27：**查询按词拆，全部命中才算命中**。
+     * 她搜「女仆 哭泣」「蓝发女仆拎人」——整串 includes 永远匹配不上
+     * （描述是「蓝发女仆拎着同款小号哭泣版，抬手指着」），于是她以为库存里没有。
+     * 这不是她的说法有问题，是搜索太笨。
+     */
+    const terms = q.split(/[\s,，、;；/|]+/).filter((t) => t !== '');
     const hit = (it) => {
-      if (q === '') return true;
-      return String(it.desc ?? '').toLowerCase().includes(q)
-        || String(it.from ?? '').toLowerCase().includes(q);
+      if (terms.length === 0) return true;
+      const hay = `${it.desc ?? ''} ${it.from ?? ''}`.toLowerCase();
+      return terms.every((t) => hay.includes(t));
     };
     const all = this.items.filter(hit);
     // 最近的排前面

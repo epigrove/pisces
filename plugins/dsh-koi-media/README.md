@@ -68,6 +68,7 @@ The test prints `✅` or `❌` per case and ends with `N 通过 / 0 失败`; suc
 
 ## Notes / Limitations
 
+- Sending a kept image needs a channel-scoped target: `group:<group_openid>` or `c2c:<c2c_openid>`. A person's group-scope openid (often seen in transcripts) is **not** a send target; passing it makes the platform answer with a misleading "media download failed" error. Inside a channel session the tool derives the target itself.
 - `recall_image` also lists unregistered files in the library directory: images kept before the inventory existed have no description, so they can only be found by opening them and registering them with `keep_image`.
 - Automatic transcription requires both an LLM stream service and an attachment service with `saveImage`.
 - The route is resolved on every call using plugin overrides, panel fixed routing, active sessions, then environment variables.
