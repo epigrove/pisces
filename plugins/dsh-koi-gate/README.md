@@ -49,6 +49,7 @@ Plugin id: `koi-gate`. Injected services: none.
 | `system-prompt/assemble` | event subscription | Adds the outbound self-check section. |
 | `session/event` | event subscription inside `createGate()` | Tracks session, turn, and step for send correlation. |
 | `koi:outbound`, order `97` | prompt section | Sending self-check instructions. |
+| `koi:last-send` | runtime context snapshot | One line: when the last media send happened, whether it succeeded, and to which scope. Overwritten on every send; no history. |
 | `allow`, `allowOnce` | exported functions | Outbound drop checks and state-line throttling helper. |
 | `createGate`, `installSelftalk` | exported functions | Build or install inbound group middleware. |
 | `installSendLog`, `onSendResult` | exported functions | Wrap platform sends and publish results. |

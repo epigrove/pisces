@@ -46,6 +46,7 @@
 | --- | --- | --- |
 | `koi-gate` | 插件 id | 包导出的挂载名。 |
 | `koi:outbound`，order `97` | 注入段 | 发送前自查说明。 |
+| `koi:last-send` | 运行时上下文快照 | 一行：最近一次发图的时间、成败、发给谁（群/私聊）。每次发送覆盖，不留历史。 |
 | `allow`, `allowOnce` | 导出函数 | 出口丢弃判断，以及状态行节流辅助。 |
 | `createGate`, `installSelftalk` | 导出函数 | 构造或安装群聊入口中间件。 |
 | `installSendLog`, `onSendResult` | 导出函数 | 包装平台发送并发布关联投递结果。 |

@@ -19,6 +19,9 @@
  * 通道侧调用不变（只是包名换了）：
  *   import { createGate, allow } from 'dsh-koi-gate';
  */
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { SILENCE_TOKEN } from './silence.mjs';
 import { allow as allowImpl } from './says.js';
 import { installSelftalk } from './selftalk-gate.mjs';
@@ -50,6 +53,44 @@ export const inject = [];
  * 返回注销函数；回调抛错不会影响发送。
  */
 const sendResultListeners = new Set();
+
+/**
+ * 2026-11-28：**最近一次「发图」的真实结果**。
+ *
+ * 她提案里的 A：说「发不出去」之前要有据可查。
+ * 起因是 11-27 09:41 那轮——她在对话通道里发图成功了，但群会话看不到，
+ * 下一句还在问「本小姐发不发得出去」。跨会话的能力状态没同步。
+ *
+ * 只记**一条**：最新的那次，旧的直接覆盖（她要求"一行就够，旧的丢掉"）。
+ * 由 `installSendLog` 在 sendMedia 回执后写入，`apply()` 的 assemble 里读出来，
+ * 作为一行运行时上下文注入——不占系统提示词，也不累积。
+ */
+const DATA_DIR = process.env.KOI_HOME ? join(process.env.KOI_HOME, '.koi') : join(homedir(), '.koi');
+const LAST_SEND_FILE = join(DATA_DIR, 'last-send.json');
+let lastMediaSend = null;
+
+function rememberMediaSend(entry) {
+  lastMediaSend = entry;
+  try {
+    mkdirSync(DATA_DIR, { recursive: true });
+    const tmp = `${LAST_SEND_FILE}.tmp-${process.pid}`;
+    writeFileSync(tmp, JSON.stringify(entry), 'utf8');
+    renameSync(tmp, LAST_SEND_FILE);
+  } catch (err) {
+    // 存不下不该影响发送本身，但要吭声
+    console.log(`[koi-gate] 最近一次发图状态没存下来（不影响发送）：${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
+function readLastMediaSend() {
+  if (lastMediaSend !== null) return lastMediaSend;
+  try {
+    const raw = JSON.parse(readFileSync(LAST_SEND_FILE, 'utf8'));
+    return raw && typeof raw === 'object' ? raw : null;
+  } catch {
+    return null;
+  }
+}
 
 export function onSendResult(callback) {
   if (typeof callback !== 'function') return () => {};
@@ -168,6 +209,15 @@ export function installSendLog(bot, log, contextOf = () => ({})) {
     ].join(' ');
     safeLog(`[send] ${ok ? 'ok' : 'failed'} ${detail}${err ? ` err=${err}` : ''}`);
     publishSendResult(result);
+    // 只记发图（附件发送）：那才是「发不出去」会指的东西
+    if (via === 'sendMedia') {
+      rememberMediaSend({
+        at: Date.now(),
+        ok,
+        scope: String(opts?.target?.scope ?? opts?.target?.kind ?? ''),
+        err: ok ? '' : String(err ?? '').slice(0, 60),
+      });
+    }
   };
 
   const wrapped = [];
@@ -321,6 +371,22 @@ export function createGate(bot, ctx, config) {
   return mw;
 }
 
+/**
+ * 「最近一次发图」那行——只给一条，说清时间、成败、发给谁（群/私聊）。
+ * 没有记录就返回空串，不占位置。
+ */
+function lastSendLine() {
+  const last = readLastMediaSend();
+  if (!last || !Number.isFinite(Number(last.at))) return '';
+  const d = new Date(Number(last.at));
+  const p2 = (n) => String(n).padStart(2, '0');
+  const when = `${p2(d.getMonth() + 1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+  const where = last.scope === 'group' ? '群' : last.scope === 'c2c' ? '私聊' : (String(last.scope ?? '') || '未知');
+  if (last.ok) return `【最近一次发图】${when} 成功（${where}）`;
+  const why = String(last.err ?? '').replace(/\s+/g, ' ').slice(0, 40) || '未知原因';
+  return `【最近一次发图】${when} 失败：${why}（${where}）`;
+}
+
 export function apply(ctx) {
   /**
    * 直接 console.log：ctx.logger 的输出**不进 koi.log**，运维看不到。
@@ -338,8 +404,14 @@ export function apply(ctx) {
       '- 退场语别连着用同一句；连着两条退场后，第三条必须说实在的。',
       '- 内部进度可以说，但要讲得让人听得懂；行话（版本号/字段名/某栏）等于没说。',
     ].join('\n');
+    const ctxLine = lastSendLine();
     if (base && typeof base === 'object' && Array.isArray(base.sections)) {
-      return { ...base, sections: [...base.sections, { name: 'koi:outbound', order: 97, text }] };
+      return {
+        ...base,
+        sections: [...base.sections, { name: 'koi:outbound', order: 97, text }],
+        // 一行，只有一条；旧的被覆盖（见 rememberMediaSend / readLastMediaSend）
+        ...(ctxLine === '' ? {} : { contexts: [...(base.contexts ?? []), { name: 'koi:last-send', text: ctxLine }] }),
+      };
     }
     return base;
   });
